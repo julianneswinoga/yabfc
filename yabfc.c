@@ -1,4 +1,4 @@
-#include "bfcompiler.h"
+#include "yabfc.h"
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	struct argumentStruct *arguments = state->input;
