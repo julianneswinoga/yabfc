@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+uint8_t ELFMAGIC[] = {0x7f, 'E', 'L', 'F'};
+
 globalOptionsStruct globalOptions = {
     .numFiles = 0, .verbose = false, .silent = false, .outputFile = ""};
 
