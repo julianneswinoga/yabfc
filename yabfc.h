@@ -1,5 +1,5 @@
-#ifndef BFCOMPILER_H_
-#define BFCOMPILER__H_
+#ifndef YABFC_H_
+#define YABFC_H_
 
 #include "arguments.h"
 #include "helpers.h"
@@ -21,12 +21,11 @@ static char doc[]                    = "Documentation";
 static char args_doc[]               = "InputFiles";
 
 /* The options we understand. */
-static struct argp_option options[] = {
-    {"verbose", 'v', 0, 0, "Produce verbose output"},
-    {"quiet", 'q', 0, 0, "Don't produce any output"},
-    {"silent", 's', 0, OPTION_ALIAS},
-    {"output", 'o', "FILE", 0, "Output to FILE"},
-    {0}};
+static struct argp_option options[] = {{"verbose", 'v', 0, 0, "Produce verbose output"},
+                                       {"quiet", 'q', 0, 0, "Don't produce any output"},
+                                       {"silent", 's', 0, OPTION_ALIAS},
+                                       {"output", 'o', "FILE", 0, "Output to FILE"},
+                                       {0}};
 
 struct argumentStruct {
 	char *args[64];
@@ -35,9 +34,8 @@ struct argumentStruct {
 	int   numFiles;
 };
 
-struct argumentStruct arguments = {
-    .silent = 0, .verbose = 0, .output_file = "", .numFiles = 0};
+struct argumentStruct arguments = {.silent = 0, .verbose = 0, .output_file = "", .numFiles = 0};
 
 static struct argp argp = {options, parse_opt, args_doc, doc};
 
-#endif // BFCOMPILER_H_
+#endif // YABFC_H_
