@@ -1,14 +1,24 @@
-PROJECT = bfcompiler
+TARGET = bfcompiler
+LIBS = -lm
+CC = colorgcc
+CFLAGS = -g -Wall -std=c99
 
-CFLAGS = -std=c99 -pthread -lm
+.PHONY: default all clean
 
-all: $(PROJECT)
+default: $(TARGET)
+all: default
 
-$(PROJECT): $(PROJECT).o
-	gcc $(CFLAGS) $(PROJECT).o -o $(PROJECT)
+OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
+HEADERS = $(wildcard *.h)
 
-$(PROJECT).o: $(PROJECT).c
-	gcc $(CFLAGS) -c $(PROJECT).c
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PRECIOUS: $(TARGET) $(OBJECTS)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
-	rm $(PROJECT) $(PROJECT).o
+	-rm -f *.o
+	-rm -f $(TARGET)
