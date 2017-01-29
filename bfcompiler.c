@@ -25,7 +25,16 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 }
 
 int main(int argc, char *argv[]) {
-	FILE *readFile, *writeFile;
+	FILE *     readFile, *writeFile;
+	Elf32_Ehdr ELFHeader;
+
+	ELFHeader.e_ident[EI_MAG0]  = 0x7f;
+	ELFHeader.e_ident[EI_MAG1]  = 'E';
+	ELFHeader.e_ident[EI_MAG2]  = 'L';
+	ELFHeader.e_ident[EI_MAG3]  = 'F';
+	ELFHeader.e_ident[EI_CLASS] = ELFCLASS32;  // 32 bit ELF
+	ELFHeader.e_ident[EI_CLASS] = ELFDATA2MSB; // Big endian
+
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	globalOptions.verbose    = arguments.verbose;
 	globalOptions.outputFile = arguments.output_file;
@@ -44,8 +53,10 @@ int main(int argc, char *argv[]) {
 		                      : "output1",
 		                  "w+");
 
-		uint8_t m[2] = {5, 10};
-		fwrite(m, sizeof(m[0]), sizeof(m), writeFile);
+		printf("%i\n", sizeof(ELFHeader.e_ident));
+		fwrite(ELFHeader.e_ident, 1, sizeof(ELFHeader.e_ident), writeFile);
+
+		debugPrintf("Done processing file %s\n", arguments.args[i]);
 	}
 	fclose(readFile);  // Close read file pointer
 	fclose(writeFile); // Close write file pointer
