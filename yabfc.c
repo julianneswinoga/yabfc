@@ -56,8 +56,8 @@ void setupELFHeader(Elf32_Ehdr *ELFHeader) {
 		ELFHeader->e_phnum = e_phnum;
 	}
 
-	ELFHeader->e_shentsize = 0; // Section header size, in bytes
-	int e_shnum            = 0; // Number of entries in section header
+	ELFHeader->e_shentsize = 0;   // Section header size, in bytes
+	int e_shnum            = 0x3; // Number of entries in section header
 	if (e_shnum > SHN_LORESERVE) {
 		ELFHeader->e_shnum = 0x0;
 		printf("WARNING: Elf32_Ehdr.e_shnum is greater than SHN_LORESERVE, "
@@ -77,6 +77,19 @@ void setupELFHeader(Elf32_Ehdr *ELFHeader) {
 	}
 }
 
+void setupSectionHeader(Elf32_Shdr *sectionHeader, uint8_t vals[static 10]) {
+	sectionHeader->sh_name      = vals[0];
+	sectionHeader->sh_type      = vals[1];
+	sectionHeader->sh_flags     = vals[2];
+	sectionHeader->sh_addr      = vals[3];
+	sectionHeader->sh_offset    = vals[4];
+	sectionHeader->sh_size      = vals[5];
+	sectionHeader->sh_link      = vals[6];
+	sectionHeader->sh_info      = vals[7];
+	sectionHeader->sh_addralign = vals[8];
+	sectionHeader->sh_entsize   = vals[9];
+}
+
 void setupProgramHeader(Elf32_Phdr *programHeader) {
 	programHeader->p_type = 1;
 }
@@ -84,10 +97,14 @@ void setupProgramHeader(Elf32_Phdr *programHeader) {
 int main(int argc, char *argv[]) {
 	FILE *     readFile, *writeFile;
 	Elf32_Ehdr ELFHeader;
-	Elf32_Phdr programHeader;
-
 	setupELFHeader(&ELFHeader);
+
+	Elf32_Phdr programHeader;
+	Elf32_Shdr sectionHeader[ELFHeader.e_shnum];
+
 	setupProgramHeader(&programHeader);
+	setupSectionHeader(&sectionHeader[0],
+	                   (uint8_t[10]){0, SHT_NULL, 0, 0, 0, 0, 0, 0, 0, 0}); // Null header
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	globalOptions.verbose    = arguments.verbose;
