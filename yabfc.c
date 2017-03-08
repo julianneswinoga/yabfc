@@ -24,15 +24,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 }
 
 int main(int argc, char *argv[]) {
-	FILE *     readFile, *writeFile;
-	Elf32_Ehdr ELFHeader;
-	setupELFHeader(&ELFHeader);
-
-	Elf32_Phdr programHeader;
-	Elf32_Shdr sectionHeader[ELFHeader.e_shnum];
-
-	setupProgramHeader(&programHeader);
-	setupSectionHeader(&sectionHeader[0], (uint8_t[10]){0, SHT_NULL, 0, 0, 0, 0, 0, 0, 0, 0}); // Null header
+	FILE *readFile, *writeFile;
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	globalOptions.verbose    = arguments.verbose;
