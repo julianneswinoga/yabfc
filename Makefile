@@ -1,6 +1,5 @@
 TARGET = yabfc
 LIBS = -lm
-CC = colorgcc
 CFLAGS = -g -Wall -std=c99
 
 .PHONY: default all clean
