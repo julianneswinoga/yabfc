@@ -33,6 +33,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 
 /**
  * Main function
+ * make ; and ./yabfc -v hello.bf ; and readelf output1 -a ; and hexdump -v -C output1 ; and ./output1
  * @param  argc Argument count
  * @param  argv arguments
  * @return      Program return value
