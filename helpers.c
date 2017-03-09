@@ -1,5 +1,10 @@
 #include "helpers.h"
 
+/**
+ * printf function wrapper to only print when there is verbose output
+ * @param fmt     String format
+ * @param VARARGS printf arguments
+ */
 void debugPrintf(const char *fmt, ...) {
 	if (globalOptions.verbose) {
 		va_list args;
@@ -9,19 +14,32 @@ void debugPrintf(const char *fmt, ...) {
 	}
 }
 
+/**
+ * Function to find the starting index of a string from a null-terminated string character array
+ * @param  stringData Tnull-terminated string character array
+ * @param  index      Index of string to get
+ * @return            Starting index of the requested string
+ */
 uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
-	uint32_t stringIndex = 0;
-	uint16_t i;
-	for (i = 0; stringIndex != index; i++)
-		if (*(stringData + i) == '\0') stringIndex++;
-	return i;
+	uint32_t stringIndex = 0, i = 0; // Initialize variables
+	for (; stringIndex != index; i++)
+		if (*(stringData + i) == '\0') stringIndex++; // Increment the string index if we are on a null character
+
+	return i; // Return the index
 }
 
+/**
+ * Function to add data to a section struct
+ * @param section   The section to modify
+ * @param startByte Byte array of data to add
+ * @param size      How much data is being added
+ */
 void addSectionData(SECTION *section, uint8_t startByte[], uint16_t size) {
-	(*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t));
+	(*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t)); // Reallocate memory
 
 	uint16_t byteIndex = 0;
-	for (uint16_t i = (*section).size; i < (*section).size + size; i++) (*section).bytes[i] = *(startByte + byteIndex++);
+	for (uint16_t i         = (*section).size; i < (*section).size + size; i++)
+		(*section).bytes[i] = *(startByte + byteIndex++); // Add the data to the section
 
-	(*section).size += size;
+	(*section).size += size; // Increment the sections size by how much data was added
 }
