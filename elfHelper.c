@@ -70,6 +70,25 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 }
 
 /**
+ * Helper method to fill in ELF program header
+ * @param programHeader      Program header to modify
+ * @param flags              Program section flags
+ * @param poffset            Program section file offset
+ * @param moffset            Program section memory offset
+ * @param size               Program section
+ */
+void setupprogramHeader(Elf64_Phdr *programHeader, uint64_t flags, uint64_t poffset, uint64_t moffset, uint64_t size) {
+	programHeader->p_type   = PT_LOAD;
+	programHeader->p_flags  = flags;
+	programHeader->p_offset = poffset;
+	programHeader->p_vaddr  = moffset;
+	programHeader->p_paddr  = moffset;
+	programHeader->p_filesz = size;
+	programHeader->p_memsz  = size;
+	programHeader->p_align  = 0x0; // No alignment
+}
+
+/**
  * Helper method to fill in ELF section header
  * @param sectionHeader Section header to modify
  * @param sh_name       Section name
@@ -90,16 +109,4 @@ void setupSectionHeader(Elf64_Shdr *sectionHeader, uint64_t sh_name, uint64_t sh
 	sectionHeader->sh_info      = 0;
 	sectionHeader->sh_addralign = 0;
 	sectionHeader->sh_entsize   = 0;
-}
-
-void setupprogramHeader(Elf64_Phdr *programHeaderTable, uint64_t flags, uint64_t poffset, uint64_t moffset, uint64_t size) {
-	programHeaderTable->p_type   = PT_LOAD;
-	programHeaderTable->p_flags  = flags;
-	programHeaderTable->p_offset = poffset;
-	programHeaderTable->p_vaddr  = moffset;
-	programHeaderTable->p_paddr  = moffset;
-	programHeaderTable->p_filesz = size;
-	programHeaderTable->p_memsz  = size;
-
-	programHeaderTable->p_align = 0x0;
 }
