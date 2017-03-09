@@ -1,9 +1,16 @@
 #include "yabfc.h"
 
+/**
+ * Function which takes care of parsing command line switches
+ * @param  key   Argument switch
+ * @param  arg   Argument data string
+ * @param  state The state of the current arguments
+ * @return       error_t on error
+ */
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	struct argumentStruct *arguments = state->input;
 
-	switch (key) {
+	switch (key) { // Switch for setting the argument values
 		case 'q':
 		case 's': arguments->silent      = 1; break;
 		case 'v': arguments->verbose     = 1; break;
@@ -15,12 +22,13 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 			break;
 
 		case ARGP_KEY_END:
-			if (state->arg_num < 1) argp_usage(state);
+			if (state->arg_num < 1) argp_usage(state); // Not enough files
 			break;
 
-		default: return ARGP_ERR_UNKNOWN;
+		default:
+			return ARGP_ERR_UNKNOWN; // Error
 	}
-	return 0;
+	return 0; // No error
 }
 
 int main(int argc, char *argv[]) {
