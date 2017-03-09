@@ -69,6 +69,16 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 	}
 }
 
+/**
+ * Helper method to fill in ELF section header
+ * @param sectionHeader Section header to modify
+ * @param sh_name       Section name
+ * @param sh_type       Section type
+ * @param sh_flags      Section flags
+ * @param sh_addr       Section memory address
+ * @param sh_offset     Section file address
+ * @param sh_size       Section size
+ */
 void setupSectionHeader(Elf64_Shdr *sectionHeader, uint64_t sh_name, uint64_t sh_type, uint64_t sh_flags, uint64_t sh_addr, uint64_t sh_offset, uint64_t sh_size) {
 	sectionHeader->sh_name      = sh_name;
 	sectionHeader->sh_type      = sh_type;
@@ -76,7 +86,7 @@ void setupSectionHeader(Elf64_Shdr *sectionHeader, uint64_t sh_name, uint64_t sh
 	sectionHeader->sh_addr      = sh_addr;
 	sectionHeader->sh_offset    = sh_offset;
 	sectionHeader->sh_size      = sh_size;
-	sectionHeader->sh_link      = 0;
+	sectionHeader->sh_link      = 0; // Currently unused
 	sectionHeader->sh_info      = 0;
 	sectionHeader->sh_addralign = 0;
 	sectionHeader->sh_entsize   = 0;
