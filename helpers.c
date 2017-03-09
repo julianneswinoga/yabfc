@@ -1,5 +1,10 @@
 #include "helpers.h"
 
+/**
+ * printf function wrapper to only print when there is verbose output
+ * @param fmt     String format
+ * @param VARARGS printf arguments
+ */
 void debugPrintf(const char *fmt, ...) {
 	if (globalOptions.verbose) {
 		va_list args;
