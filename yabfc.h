@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define VALID_COMMANDS "+-<>[],."
+
 // Function declarations
 static error_t parse_opt(int, char *, struct argp_state *);
 
@@ -25,6 +27,16 @@ static struct argp_option options[] = {{"verbose", 'v', 0, 0, "Produce verbose o
                                        {"silent", 's', 0, OPTION_ALIAS},
                                        {"output", 'o', "FILE", 0, "Output to FILE"},
                                        {0}};
+
+typedef struct {
+	char type;
+	int  bracketMatch;
+} INSTRUCTION;
+
+typedef struct {
+	int          size;
+	INSTRUCTION *instructions;
+} INSTRUCTIONS;
 
 // Structure to hold the arguments
 struct argumentStruct {
