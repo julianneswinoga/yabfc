@@ -71,6 +71,26 @@ int main(int argc, char *argv[]) {
 		               SEC_HEADER_SIZE, SEC_HEADER_NUM); // Mostly set up the ELF header
 
 		debugPrintf("Constructing .text section\n");
+
+		INSTRUCTIONS instructions = {
+		    .size         = 0,
+		    .instructions = malloc(0)};
+
+		char readCharacter = 0;
+		while ((readCharacter = fgetc(readFile)) != EOF) {
+			if (strpbrk(VALID_COMMANDS, &readCharacter) != NULL) {
+				INSTRUCTION tempInstruction = {
+				    .type         = readCharacter,
+				    .bracketMatch = 0};
+
+				instructions.instructions                      = (INSTRUCTION *)realloc(instructions.instructions, (instructions.size + 1) * sizeof(INSTRUCTION));
+				instructions.instructions[instructions.size++] = tempInstruction;
+			}
+		}
+
+		for (int i = 0; i < instructions.size; i++)
+			printf("%c", instructions.instructions[i].type);
+
 		uint8_t code[] = {0x31, 0xFF, 0xBF, 0x2A, 0x00, 0x00, 0x00, 0xB8, 0x3C, 0x00, 0x00, 0x00, 0x0F, 0x05};
 		addSectionData(&text, (uint8_t *)&code, sizeof(code)); // Add some example code
 
