@@ -2,6 +2,7 @@
 #define YABFC_H_
 
 #include "arguments.h"
+#include "assembly.h"
 #include "helpers.h"
 #include <argp.h>
 #include <elf.h>
@@ -35,7 +36,7 @@ typedef struct {
 
 typedef struct {
 	int          size;
-	INSTRUCTION *instructions;
+	INSTRUCTION *instruction;
 } INSTRUCTIONS;
 
 // Structure to hold the arguments

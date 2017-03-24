@@ -73,8 +73,8 @@ int main(int argc, char *argv[]) {
 		debugPrintf("Constructing .text section\n");
 
 		INSTRUCTIONS instructions = {
-		    .size         = 0,
-		    .instructions = malloc(0)};
+		    .size        = 0,
+		    .instruction = malloc(0)};
 
 		char readCharacter = 0;
 		while ((readCharacter = fgetc(readFile)) != EOF) {
@@ -83,16 +83,35 @@ int main(int argc, char *argv[]) {
 				    .type         = readCharacter,
 				    .bracketMatch = 0};
 
-				instructions.instructions                      = (INSTRUCTION *)realloc(instructions.instructions, (instructions.size + 1) * sizeof(INSTRUCTION));
-				instructions.instructions[instructions.size++] = tempInstruction;
+				instructions.instruction                      = (INSTRUCTION *)realloc(instructions.instruction, (instructions.size + 1) * sizeof(INSTRUCTION));
+				instructions.instruction[instructions.size++] = tempInstruction;
 			}
 		}
 
-		for (int i = 0; i < instructions.size; i++)
-			printf("%c", instructions.instructions[i].type);
+		CODE code = {
+		    .size  = 0,
+		    .bytes = malloc(0)};
 
-		uint8_t code[] = {0x31, 0xFF, 0xBF, 0x2A, 0x00, 0x00, 0x00, 0xB8, 0x3C, 0x00, 0x00, 0x00, 0x0F, 0x05};
-		addSectionData(&text, (uint8_t *)&code, sizeof(code)); // Add some example code
+		/*uint8_t stacksetup[] = {0x55};
+		construct_arbitrary(&code, stacksetup, sizeof(stacksetup));
+		uint8_t stacksetup2[] = {0x83, 0xEC, 0x04};
+		construct_arbitrary(&code, stacksetup2, sizeof(stacksetup2));*/
+
+		for (int i = 0; i < instructions.size; i++) {
+			printf("%c", instructions.instruction[i].type);
+			switch (instructions.instruction[i].type) {
+				case '+':
+					construct_INC(&code);
+					break;
+				case '.':
+					construct_PRINT(&code);
+					break;
+			}
+		}
+		construct_END(&code);
+		printf("\n");
+
+		addSectionData(&text, code.bytes, code.size); // Add some example code
 
 		debugPrintf("Constructing .data section\n");
 		uint8_t tempData = '0';
