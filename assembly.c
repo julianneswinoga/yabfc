@@ -1,6 +1,18 @@
 #include "assembly.h"
 
-//{0x31, 0xFF, 0xBF, 0x2A, 0x00, 0x00, 0x00, 0xB8, 0x3C, 0x00, 0x00, 0x00, 0x0F, 0x05}
+/*
+
+mov ds, 0xFFFF
+
+#mov rax, [rsp]
+#inc    rax
+#mov [rsp], rax
+
+#mov    rdx, [rsp]
+#mov    rax, 2
+#int    33
+
+ */
 
 void construct_arbitrary(CODE *code, uint8_t *machCode, uint16_t size) {
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + size * sizeof(uint8_t)));
@@ -10,11 +22,8 @@ void construct_arbitrary(CODE *code, uint8_t *machCode, uint16_t size) {
 	code->size += size;
 }
 
-// 0:  83 ec 04                sub    esp,0x8
-// 3:  b8 01 00 00 00          mov    eax,0x1
-// 8:  67 01 04 24             add    DWORD PTR [esp],eax
 void construct_INC(CODE *code) {
-	uint8_t machCode[] = {0x89, 0x04, 0x25, 0xA9, 0x01, 0x00, 0x04};
+	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC0, 0x48, 0x89, 0x04, 0x24};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -44,8 +53,15 @@ void construct_LPEND() {
 void construct_INPUT() {
 }
 
+/*
+mov rax, 4
+mov rbx, 1
+mov rcx, rsp
+mov rdx, 1
+int 0x80
+ */
 void construct_PRINT(CODE *code) {
-	uint8_t machCode[] = {0x67, 0x8B, 0x14, 0x24, 0xB8, 0x02, 0x00, 0x00, 0x00, 0xCD, 0x21}; //{0x67, 0x8A, 0x14, 0x24, 0xB4, 0x02, 0xCD, 0x21};
+	uint8_t machCode[] = {0x48, 0xC7, 0xC0, 0x04, 0x00, 0x00, 0x00, 0x48, 0xC7, 0xC3, 0x01, 0x00, 0x00, 0x00, 0x48, 0x89, 0xE1, 0x48, 0xC7, 0xC2, 0x01, 0x00, 0x00, 0x00, 0xCD, 0x80};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -54,8 +70,13 @@ void construct_PRINT(CODE *code) {
 	code->size += sizeof(machCode);
 }
 
+/*
+mov eax, 1
+mov ebx, [rsp]
+int 0x80
+ */
 void construct_END(CODE *code) {
-	uint8_t machCode[] = {0x31, 0xFF, 0xBF, 0x2A, 0x00, 0x00, 0x00, 0xB8, 0x3C, 0x00, 0x00, 0x00, 0x0F, 0x05};
+	uint8_t machCode[] = {0x48, 0xC7, 0xC0, 0x01, 0x00, 0x00, 0x00, 0x48, 0x8B, 0x1C, 0x24, 0xCD, 0x80};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
