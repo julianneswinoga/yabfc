@@ -111,6 +111,9 @@ sub rsp, 4
 				case '+':
 					construct_INC(&code);
 					break;
+				case '-':
+					construct_DEC(&code);
+					break;
 				case '.':
 					construct_PRINT(&code);
 					break;
@@ -188,6 +191,8 @@ sub rsp, 4
 
 		debugPrintf("Writing section header, %i sections\n", ELFHeader.e_shnum);
 		fwrite(&sectionHeaderTable, 1, sizeof(sectionHeaderTable), writeFile); // Write section header table
+
+		debugPrintf("Entry point: %#08x\n", ENTRY_POINT);
 
 		debugPrintf("Done processing file %s\n", arguments.args[i]);
 	}
