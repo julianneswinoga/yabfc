@@ -43,8 +43,8 @@ mov rax, [rsp]
 dec rax
 mov [rsp], rax
  */
-void construct_DEC() {
-	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC8, 0x48, 0x89, 0x04, 0x24};
+void construct_DEC(CODE *code) {
+	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC0, 0x48, 0x89, 0x04, 0x24};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -54,31 +54,51 @@ void construct_DEC() {
 }
 
 // ADD 4, esp (01-r r/m16/32/64 r16/32/64)
-void construct_ADDESP() {
+/*
+add rsp, 4
+ */
+void construct_ADDESP(CODE *code) {
+	uint8_t machCode[] = {0x48, 0x83, 0xC4, 0x04};
+
+	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
+	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
+		code->bytes[i] = machCode[i - code->size];
+	}
+	code->size += sizeof(machCode);
 }
 
 // SUB 4, esp (29-4 r/m16/32/64 r16/32/64)
-void construct_SUBESP() {
+/*
+sub, rsp, 4
+ */
+void construct_SUBESP(CODE *code) {
+	uint8_t machCode[] = {0x48, 0x83, 0xEC, 0x04};
+
+	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
+	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
+		code->bytes[i] = machCode[i - code->size];
+	}
+	code->size += sizeof(machCode);
 }
 
-void construct_LPSTART() {
+void construct_LPSTART(CODE *code) {
 }
 
-void construct_LPEND() {
+void construct_LPEND(CODE *code) {
 }
 
-void construct_INPUT() {
+void construct_INPUT(CODE *code) {
 }
 
 /*
-mov edx, 1 # num bytes to output
-mov ecx, rsp # Address of the buffer
-mov ebx, 1 # stdout
-mov eax, 4 # __NR_write
+mov rdx, 1 # num bytes to output
+mov rcx, rsp # Address of the buffer
+mov rbx, 1 # stdout
+mov rax, 4 # __NR_write
 int 0x80
  */
 void construct_PRINT(CODE *code) {
-	uint8_t machCode[] = {0xBA, 0x01, 0x00, 0x00, 0x00, 0x89, 0xE1, 0xBB, 0x01, 0x00, 0x00, 0x00, 0xB8, 0x04, 0x00, 0x00, 0x00, 0xCD, 0x80};
+	uint8_t machCode[] = {0x48, 0xC7, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x48, 0x89, 0xE1, 0x48, 0xC7, 0xC3, 0x01, 0x00, 0x00, 0x00, 0x48, 0xC7, 0xC0, 0x04, 0x00, 0x00, 0x00, 0xCD, 0x80};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -88,8 +108,8 @@ void construct_PRINT(CODE *code) {
 }
 
 /*
-mov eax, 1
-mov ebx, [rsp]
+mov rax, 1
+mov rbx, [rsp]
 int 0x80
  */
 void construct_END(CODE *code) {
