@@ -1,19 +1,5 @@
 #include "assembly.h"
 
-/*
-
-mov ds, 0xFFFF
-
-#mov rax, [rsp]
-#inc    rax
-#mov [rsp], rax
-
-#mov    rdx, [rsp]
-#mov    rax, 2
-#int    33
-
- */
-
 void construct_arbitrary(CODE *code, uint8_t *machCode, uint16_t size) {
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + size * sizeof(uint8_t)));
 	for (int i = code->size; i < code->size + size; i++) {

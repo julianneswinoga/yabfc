@@ -13,9 +13,6 @@
 
 #define VALID_COMMANDS "+-<>[],."
 
-// Function declarations
-static error_t parse_opt(int, char *, struct argp_state *);
-
 // Author information
 const char *argp_program_version     = "bfcompiler 0.1";
 const char *argp_program_bug_address = "<cameronswinoga@gmail.com>";
@@ -58,6 +55,10 @@ globalOptionsStruct globalOptions = {
     .verbose    = false,
     .silent     = false,
     .outputFile = ""}; // Program arguments that should be globally shared
+
+// Function declarations
+static error_t parse_opt(int, char *, struct argp_state *);
+int            get_matching_bracket(INSTRUCTIONS *, int);
 
 static struct argp argp = {options, parse_opt, args_doc, doc};
 
