@@ -13,12 +13,12 @@ typedef struct {
 // Function declarations
 void construct_arbitrary(CODE *, uint8_t *, uint16_t);
 void construct_INC(CODE *);
-void construct_DEC();
-void construct_ADDESP();
-void construct_SUBESP();
-void construct_LPSTART();
-void construct_LPEND();
-void construct_INPUT();
+void construct_DEC(CODE *);
+void construct_ADDESP(CODE *);
+void construct_SUBESP(CODE *);
+void construct_LPSTART(CODE *);
+void construct_LPEND(CODE *);
+void construct_INPUT(CODE *);
 void construct_PRINT(CODE *);
 void construct_END(CODE *);
 

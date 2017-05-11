@@ -76,9 +76,11 @@ int main(int argc, char *argv[]) {
 		    .size        = 0,
 		    .instruction = malloc(0)};
 
+		debugPrintf("Program as read from file: ");
 		char readCharacter = 0;
 		while ((readCharacter = fgetc(readFile)) != EOF) {
 			if (strpbrk(VALID_COMMANDS, &readCharacter) != NULL) {
+				debugPrintf("%c", readCharacter);
 				INSTRUCTION tempInstruction = {
 				    .type         = readCharacter,
 				    .bracketMatch = 0};
@@ -87,13 +89,13 @@ int main(int argc, char *argv[]) {
 				instructions.instruction[instructions.size++] = tempInstruction;
 			}
 		}
+		debugPrintf("\n");
 
 		CODE code = {
 		    .size  = 0,
 		    .bytes = malloc(0)};
 
 		/*
-
 xor ebp, ebp
 mov r9, rdx
 pop rsi
@@ -106,7 +108,6 @@ sub rsp, 4
 		construct_arbitrary(&code, preamble, sizeof(preamble));
 
 		for (int i = 0; i < instructions.size; i++) {
-			printf("%c", instructions.instruction[i].type);
 			switch (instructions.instruction[i].type) {
 				case '+':
 					construct_INC(&code);
@@ -114,13 +115,27 @@ sub rsp, 4
 				case '-':
 					construct_DEC(&code);
 					break;
+				case '>':
+					construct_ADDESP(&code);
+					break;
+				case '<':
+					construct_SUBESP(&code);
+					break;
+				case '[':
+					construct_LPSTART(&code);
+					break;
+				case ']':
+					construct_LPEND(&code);
+					break;
+				case ',':
+					construct_INPUT(&code);
+					break;
 				case '.':
 					construct_PRINT(&code);
 					break;
 			}
 		}
 		construct_END(&code);
-		printf("\n");
 
 		addSectionData(&text, code.bytes, code.size); // Add some example code
 
