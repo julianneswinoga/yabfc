@@ -32,32 +32,6 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 }
 
 /**
- * Gets the relative position of a bracket
- * @param  instructions A pointer to an INSTRUCTIONS type to read characters from
- * @param  position     The position of the bracket we want to match
- * @return              The relative position of the bracket, -1 if not found
- */
-int get_matching_bracket(INSTRUCTIONS *instructions, int position) {
-	if (instructions->instruction[position].type != '[') {
-		fprintf(stderr, "No bracket to match at position %i!\n", position);
-		return -1;
-	}
-
-	int bracket_depth = 0;
-	for (int i = position; i < instructions->size; i++) {
-		if (instructions->instruction[i].type == '[') {
-			bracket_depth++;
-		} else if (instructions->instruction[i].type == ']') {
-			bracket_depth--;
-		}
-		if (bracket_depth == 0 && instructions->instruction[i].type == ']') {
-			return i;
-		}
-	}
-	return -1; // Bracket not found
-}
-
-/**
  * Main function
  * make ; and ./yabfc -v hello.bf ; and readelf output1 -a ; and hexdump -v -C output1 ; and ./output1
  * @param  argc Argument count
@@ -153,7 +127,8 @@ sub rsp, 4
 						exit(1);
 					}
 					instructions.instruction[i].bracketMatch                   = relativeBracket;
-					instructions.instruction[i + relativeBracket].bracketMatch = -relativeBracket;
+					instructions.instruction[i + relativeBracket].bracketMatch = relativeBracket;
+					debugPrintf("Opening bracket @ %i jumps forward by %i\n", i, relativeBracket);
 					construct_LPSTART(&code);
 					break;
 				case ']':
@@ -161,6 +136,7 @@ sub rsp, 4
 						fprintf(stderr, "Closing bracket does not have a matching opening bracket at position %i!\n", i);
 						exit(1);
 					}
+					debugPrintf("Closing bracket @ %i jumps backward by %i\n", i, relativeBracket);
 					construct_LPEND(&code);
 					break;
 				case ',':
