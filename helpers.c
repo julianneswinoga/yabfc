@@ -43,3 +43,29 @@ void addSectionData(SECTION *section, uint8_t startByte[], uint16_t size) {
 
 	(*section).size += size; // Increment the sections size by how much data was added
 }
+
+/**
+ * Gets the relative position of a bracket
+ * @param  instructions A pointer to an INSTRUCTIONS type to read characters from
+ * @param  position     The position of the bracket we want to match
+ * @return              The relative position of the bracket, -1 if not found
+ */
+int get_matching_bracket(INSTRUCTIONS *instructions, int position) {
+	if (instructions->instruction[position].type != '[') {
+		fprintf(stderr, "No bracket to match at position %i!\n", position);
+		return -1;
+	}
+
+	int bracket_depth = 0;
+	for (int i = position; i < instructions->size; i++) {
+		if (instructions->instruction[i].type == '[') {
+			bracket_depth++;
+		} else if (instructions->instruction[i].type == ']') {
+			bracket_depth--;
+		}
+		if (bracket_depth == 0 && instructions->instruction[i].type == ']') {
+			return i - position;
+		}
+	}
+	return -1; // Bracket not found
+}

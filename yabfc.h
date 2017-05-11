@@ -13,6 +13,9 @@
 
 #define VALID_COMMANDS "+-<>[],."
 
+// Function declarations
+static error_t parse_opt(int, char *, struct argp_state *);
+
 // Author information
 const char *argp_program_version     = "bfcompiler 0.1";
 const char *argp_program_bug_address = "<cameronswinoga@gmail.com>";
@@ -25,16 +28,6 @@ static struct argp_option options[] = {{"verbose", 'v', 0, 0, "Produce verbose o
                                        {"silent", 's', 0, OPTION_ALIAS},
                                        {"output", 'o', "FILE", 0, "Output to FILE"},
                                        {0}};
-
-typedef struct {
-	char type;
-	int  bracketMatch;
-} INSTRUCTION;
-
-typedef struct {
-	int          size;
-	INSTRUCTION *instruction;
-} INSTRUCTIONS;
 
 // Structure to hold the arguments
 struct argumentStruct {
@@ -55,10 +48,6 @@ globalOptionsStruct globalOptions = {
     .verbose    = false,
     .silent     = false,
     .outputFile = ""}; // Program arguments that should be globally shared
-
-// Function declarations
-static error_t parse_opt(int, char *, struct argp_state *);
-int            get_matching_bracket(INSTRUCTIONS *, int);
 
 static struct argp argp = {options, parse_opt, args_doc, doc};
 

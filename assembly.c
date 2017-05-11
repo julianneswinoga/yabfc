@@ -23,7 +23,6 @@ void construct_INC(CODE *code) {
 	code->size += sizeof(machCode);
 }
 
-// DEC [esp] (FF-1 r/m16/32/64)
 /*
 mov rax, [rsp]
 dec rax
@@ -39,7 +38,6 @@ void construct_DEC(CODE *code) {
 	code->size += sizeof(machCode);
 }
 
-// ADD 4, esp (01-r r/m16/32/64 r16/32/64)
 /*
 add rsp, 4
  */
@@ -53,7 +51,6 @@ void construct_ADDESP(CODE *code) {
 	code->size += sizeof(machCode);
 }
 
-// SUB 4, esp (29-4 r/m16/32/64 r16/32/64)
 /*
 sub, rsp, 4
  */
@@ -67,10 +64,41 @@ void construct_SUBESP(CODE *code) {
 	code->size += sizeof(machCode);
 }
 
+/*
+Jump if zero to past loop end
+
+test rsp, 0
+je 0x0
+ */
 void construct_LPSTART(CODE *code) {
+	uint8_t machCode[] = {0x48, 0xF7, 0xC4, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x84, 0x00, 0x00, 0xFF, 0xAA};
+
+	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
+	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
+		code->bytes[i] = machCode[i - code->size];
+	}
+	code->size += sizeof(machCode);
 }
 
+/*
+Jump if not zero to past loop start
+Backwards search to find the previous loop start,
+then set the loop start to be the difference between loop start and end, (Forward jump)
+Set the end loop offset to be the negative of that, 2s complement (Backward jump)
+
+next_instr = current + imm + sizeof(jump machine code)
+
+test rsp, 0
+jne 0x0
+ */
 void construct_LPEND(CODE *code) {
+	uint8_t machCode[] = {0x48, 0xF7, 0xC4, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x85, 0xFA, 0xFF, 0xFF, 0xFF};
+
+	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
+	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
+		code->bytes[i] = machCode[i - code->size];
+	}
+	code->size += sizeof(machCode);
 }
 
 /*

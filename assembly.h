@@ -10,6 +10,16 @@ typedef struct {
 	uint8_t *bytes;
 } CODE;
 
+typedef struct {
+	char type;
+	int  bracketMatch;
+} INSTRUCTION;
+
+typedef struct {
+	int          size;
+	INSTRUCTION *instruction;
+} INSTRUCTIONS;
+
 // Function declarations
 void construct_arbitrary(CODE *, uint8_t *, uint16_t);
 void construct_INC(CODE *);

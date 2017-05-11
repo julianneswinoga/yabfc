@@ -2,6 +2,7 @@
 #define HELPERS_H_
 
 #include "arguments.h"
+#include "assembly.h"
 #include "elfHelper.h"
 #include <stdarg.h>
 #include <stdbool.h>
@@ -13,5 +14,6 @@
 void     debugPrintf(const char *, ...);
 uint32_t stringIndexFromSectionIndex(uint8_t *, uint8_t);
 void     addSectionData(SECTION *, uint8_t *, uint16_t);
+int      get_matching_bracket(INSTRUCTIONS *, int);
 
 #endif // HELPERS_H_
