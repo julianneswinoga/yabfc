@@ -87,13 +87,27 @@ void construct_LPSTART(CODE *code) {
 void construct_LPEND(CODE *code) {
 }
 
+/*
+mov rdx, 1 # 1 char
+mov rsi, rsp # char *buf
+mov rdi, 0 # fd = stdin
+mov rax, 0 # sys_read
+syscall
+ */
 void construct_INPUT(CODE *code) {
+	uint8_t machCode[] = {0x48, 0xC7, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x48, 0x89, 0xE6, 0x48, 0xC7, 0xC7, 0x00, 0x00, 0x00, 0x00, 0x48, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x05};
+
+	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
+	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
+		code->bytes[i] = machCode[i - code->size];
+	}
+	code->size += sizeof(machCode);
 }
 
 /*
 mov rdx, 1 # 1 char
 mov rsi, rsp # char *buf
-mov rdi, 1 # fd
+mov rdi, 1 # fd = stdout
 mov rax, 1 # sys_write
 syscall
  */
