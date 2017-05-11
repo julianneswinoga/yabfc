@@ -32,6 +32,32 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 }
 
 /**
+ * Gets the relative position of a bracket
+ * @param  instructions A pointer to an INSTRUCTIONS type to read characters from
+ * @param  position     The position of the bracket we want to match
+ * @return              The relative position of the bracket, -1 if not found
+ */
+int get_matching_bracket(INSTRUCTIONS *instructions, int position) {
+	if (instructions->instruction[position].type != '[') {
+		fprintf(stderr, "No bracket to match at position %i!\n", position);
+		return -1;
+	}
+
+	int bracket_depth = 0;
+	for (int i = position; i < instructions->size; i++) {
+		if (instructions->instruction[i].type == '[') {
+			bracket_depth++;
+		} else if (instructions->instruction[i].type == ']') {
+			bracket_depth--;
+		}
+		if (bracket_depth == 0 && instructions->instruction[i].type == ']') {
+			return i;
+		}
+	}
+	return -1; // Bracket not found
+}
+
+/**
  * Main function
  * make ; and ./yabfc -v hello.bf ; and readelf output1 -a ; and hexdump -v -C output1 ; and ./output1
  * @param  argc Argument count
@@ -83,7 +109,7 @@ int main(int argc, char *argv[]) {
 				debugPrintf("%c", readCharacter);
 				INSTRUCTION tempInstruction = {
 				    .type         = readCharacter,
-				    .bracketMatch = 0};
+				    .bracketMatch = -1};
 
 				instructions.instruction                      = (INSTRUCTION *)realloc(instructions.instruction, (instructions.size + 1) * sizeof(INSTRUCTION));
 				instructions.instruction[instructions.size++] = tempInstruction;
@@ -103,10 +129,10 @@ mov rdx, rsp
 and rsp, 0xfffffffffffffff0
 sub rsp, 4
  */
-
 		uint8_t preamble[] = {0x31, 0xED, 0x49, 0x89, 0xD1, 0x5E, 0x48, 0x89, 0xE2, 0x48, 0x83, 0xE4, 0xF0, 0x48, 0x83, 0xEC, 0x04}; // Preamble
 		construct_arbitrary(&code, preamble, sizeof(preamble));
 
+		int relativeBracket;
 		for (int i = 0; i < instructions.size; i++) {
 			switch (instructions.instruction[i].type) {
 				case '+':
@@ -122,9 +148,19 @@ sub rsp, 4
 					construct_SUBESP(&code);
 					break;
 				case '[':
+					if ((relativeBracket = get_matching_bracket(&instructions, i)) == -1) {
+						fprintf(stderr, "Opening bracket does not have a matching closing bracket at position %i!\n", i);
+						exit(1);
+					}
+					instructions.instruction[i].bracketMatch                   = relativeBracket;
+					instructions.instruction[i + relativeBracket].bracketMatch = -relativeBracket;
 					construct_LPSTART(&code);
 					break;
 				case ']':
+					if (instructions.instruction[i].bracketMatch == -1) {
+						fprintf(stderr, "Closing bracket does not have a matching opening bracket at position %i!\n", i);
+						exit(1);
+					}
 					construct_LPEND(&code);
 					break;
 				case ',':
