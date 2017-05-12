@@ -115,10 +115,10 @@ sub rsp, 4
 				case '-':
 					construct_DEC(&code);
 					break;
-				case '>':
+				case '<':
 					construct_ADDESP(&code);
 					break;
-				case '<':
+				case '>':
 					construct_SUBESP(&code);
 					break;
 				case '[':
