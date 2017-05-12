@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 typedef struct {
-	int      size;
+	int       size;
 	uint8_t *bytes;
 } CODE;
 
@@ -17,7 +17,7 @@ typedef struct {
 } INSTRUCTION;
 
 typedef struct {
-	int          size;
+	uint32_t     size;
 	INSTRUCTION *instruction;
 } INSTRUCTIONS;
 

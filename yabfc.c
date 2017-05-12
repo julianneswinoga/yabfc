@@ -91,6 +91,8 @@ int main(int argc, char *argv[]) {
 		}
 		debugPrintf("\n");
 
+
+		debugPrintf("Starting machine code generation\n");
 		CODE code = {
 		    .size  = 0,
 		    .bytes = malloc(0)};
@@ -136,7 +138,7 @@ sub rsp, 4
 						fprintf(stderr, "Closing bracket does not have a matching opening bracket at position %i!\n", i);
 						exit(1);
 					}
-					debugPrintf("Closing bracket @ %i jumps backward by %i\n", i, relativeBracket);
+					debugPrintf("Closing bracket @ %i jumps backward by %i\n", i, instructions.instruction[i].bracketMatch);
 					construct_LPEND(&code);
 					break;
 				case ',':
@@ -150,6 +152,8 @@ sub rsp, 4
 		construct_END(&code);
 
 		addSectionData(&text, code.bytes, code.size); // Add some example code
+
+		debugPrintf("Code bytesize: %i\nSection bytesize: %i\n", code.size, text.size);
 
 		debugPrintf("Constructing .data section\n");
 		uint8_t tempData = '0';
