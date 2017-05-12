@@ -10,11 +10,12 @@ void construct_arbitrary(CODE *code, uint8_t *machCode, uint16_t size) {
 
 /*
 mov rax, [rsp]
-inc rax
+add rax, 0x00000000
 mov [rsp], rax
  */
-void construct_INC(CODE *code) {
-	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC0, 0x48, 0x89, 0x04, 0x24};
+void construct_ADD(CODE *code, uint32_t add) {
+	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0x05, 0x00, 0x00, 0x00, 0x00, 0x48, 0x89, 0x04, 0x24};
+	memcpy(&machCode[6], &add, sizeof(add));
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -25,11 +26,12 @@ void construct_INC(CODE *code) {
 
 /*
 mov rax, [rsp]
-dec rax
+sub rax, 0x00000000
 mov [rsp], rax
  */
-void construct_DEC(CODE *code) {
-	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC8, 0x48, 0x89, 0x04, 0x24};
+void construct_SUB(CODE *code, uint32_t sub) {
+	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x48, 0x89, 0x04, 0x24};
+	memcpy(&machCode[6], &sub, sizeof(sub));
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {

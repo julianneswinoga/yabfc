@@ -2,29 +2,17 @@
 #define ASSEMBLY_H_
 
 #include "arguments.h"
+#include "helpers.h"
+#include "structures.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct {
-	int       size;
-	uint8_t *bytes;
-} CODE;
-
-typedef struct {
-	char type;
-	int  bracketMatch;
-} INSTRUCTION;
-
-typedef struct {
-	uint32_t     size;
-	INSTRUCTION *instruction;
-} INSTRUCTIONS;
+#include <string.h>
 
 // Function declarations
 void construct_arbitrary(CODE *, uint8_t *, uint16_t);
-void construct_INC(CODE *);
-void construct_DEC(CODE *);
+void construct_ADD(CODE *, uint32_t);
+void construct_SUB(CODE *, uint32_t);
 void construct_ADDESP(CODE *);
 void construct_SUBESP(CODE *);
 void construct_LPSTART(CODE *);
