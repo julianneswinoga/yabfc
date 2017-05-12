@@ -91,7 +91,6 @@ int main(int argc, char *argv[]) {
 		}
 		debugPrintf("\n");
 
-
 		debugPrintf("Starting machine code generation\n");
 		CODE code = {
 		    .size  = 0,
@@ -108,14 +107,20 @@ sub rsp, 4
 		uint8_t preamble[] = {0x31, 0xED, 0x49, 0x89, 0xD1, 0x5E, 0x48, 0x89, 0xE2, 0x48, 0x83, 0xE4, 0xF0, 0x48, 0x83, 0xEC, 0x04}; // Preamble
 		construct_arbitrary(&code, preamble, sizeof(preamble));
 
-		int relativeBracket;
+		int relativeBracket, lookahead;
 		for (int i = 0; i < instructions.size; i++) {
 			switch (instructions.instruction[i].type) {
 				case '+':
-					construct_ADD(&code, 1);
+					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '+'; lookahead++)
+						;
+					construct_ADD(&code, lookahead - i);
+					i = lookahead - 1;
 					break;
 				case '-':
-					construct_SUB(&code, 1);
+					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '-'; lookahead++)
+						;
+					construct_SUB(&code, lookahead - i);
+					i = lookahead - 1;
 					break;
 				case '<':
 					construct_ADDESP(&code);
