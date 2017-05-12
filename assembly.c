@@ -107,7 +107,6 @@ void construct_LPEND(CODE *code) {
 	for (i = code->size - sizeof(machCode); i > 0; i--) {
 		if (memcmp(&code->bytes[i], bracketSearchCode, sizeof(bracketSearchCode) * sizeof(uint8_t)) == 0) {
 			jumpDistance = i - (code->size - sizeof(machCode));
-			debugPrintf("Found matching bracket %i opcodes before\n", jumpDistance);
 			break;
 		}
 	}
@@ -118,8 +117,9 @@ void construct_LPEND(CODE *code) {
 
 	jumpBackwardCode = jumpDistance - sizeof(bracketSearchCode);
 	jumpForwardCode  = -jumpDistance + sizeof(bracketSearchCode);
-	memcpy(&code->bytes[code->size - 4], &jumpBackwardCode, 4); // Write the jump distance to the last four bytes of machine code (End loop)
-	memcpy(&code->bytes[i + 2], &jumpForwardCode, 4);           // Write forward jump distance (Open loop)
+	debugPrintf("Writing jump of %i backward and %i forward\n", jumpBackwardCode, jumpForwardCode);
+	//memcpy(&code->bytes[code->size - 4], &jumpBackwardCode, 4); // Write the jump distance to the last four bytes of machine code (End loop)
+	//memcpy(&code->bytes[i + 2], &jumpForwardCode, 4);           // Write forward jump distance (Open loop)
 }
 
 /*

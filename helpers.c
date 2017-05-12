@@ -34,11 +34,11 @@ uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
  * @param startByte Byte array of data to add
  * @param size      How much data is being added
  */
-void addSectionData(SECTION *section, uint8_t startByte[], uint16_t size) {
+void addSectionData(SECTION *section, uint8_t startByte[], uint32_t size) {
 	(*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t)); // Reallocate memory
 
-	uint16_t byteIndex = 0;
-	for (uint16_t i         = (*section).size; i < (*section).size + size; i++)
+	uint32_t byteIndex = 0;
+	for (uint32_t i         = (*section).size; i < (*section).size + size; i++)
 		(*section).bytes[i] = *(startByte + byteIndex++); // Add the data to the section
 
 	(*section).size += size; // Increment the sections size by how much data was added
