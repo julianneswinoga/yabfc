@@ -13,8 +13,8 @@
 void construct_arbitrary(CODE *, uint8_t *, uint16_t);
 void construct_ADD(CODE *, uint32_t);
 void construct_SUB(CODE *, uint32_t);
-void construct_ADDESP(CODE *);
-void construct_SUBESP(CODE *);
+void construct_ADDESP(CODE *, uint32_t);
+void construct_SUBESP(CODE *, uint32_t);
 void construct_LPSTART(CODE *);
 void construct_LPEND(CODE *);
 void construct_INPUT(CODE *);

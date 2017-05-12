@@ -41,10 +41,11 @@ void construct_SUB(CODE *code, uint32_t sub) {
 }
 
 /*
-add rsp, 4
+add rsp, 0x00000000
  */
-void construct_ADDESP(CODE *code) {
-	uint8_t machCode[] = {0x48, 0x83, 0xC4, 0x04};
+void construct_ADDESP(CODE *code, uint32_t num) {
+	uint8_t machCode[] = {0x48, 0x81, 0xC4, 0x00, 0x00, 0x00, 0x00};
+	memcpy(&machCode[3], &num, sizeof(num));
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -54,10 +55,11 @@ void construct_ADDESP(CODE *code) {
 }
 
 /*
-sub, rsp, 4
+sub, rsp, 0x00000000
  */
-void construct_SUBESP(CODE *code) {
-	uint8_t machCode[] = {0x48, 0x83, 0xEC, 0x04};
+void construct_SUBESP(CODE *code, uint32_t num) {
+	uint8_t machCode[] = {0x48, 0x81, 0xEC, 0x00, 0x00, 0x00, 0x00};
+	memcpy(&machCode[3], &num, sizeof(num));
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {

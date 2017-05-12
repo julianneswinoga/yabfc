@@ -123,10 +123,16 @@ sub rsp, 4
 					i = lookahead - 1;
 					break;
 				case '<':
-					construct_ADDESP(&code);
+					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '<'; lookahead++)
+						;
+					construct_ADDESP(&code, (lookahead - i) * 4);
+					i = lookahead - 1;
 					break;
 				case '>':
-					construct_SUBESP(&code);
+					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '>'; lookahead++)
+						;
+					construct_SUBESP(&code, (lookahead - i) * 4);
+					i = lookahead - 1;
 					break;
 				case '[':
 					if ((relativeBracket = get_matching_bracket(&instructions, i)) == -1) {
