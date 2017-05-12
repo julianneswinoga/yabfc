@@ -112,10 +112,10 @@ sub rsp, 4
 		for (int i = 0; i < instructions.size; i++) {
 			switch (instructions.instruction[i].type) {
 				case '+':
-					construct_INC(&code);
+					construct_ADD(&code, 1);
 					break;
 				case '-':
-					construct_DEC(&code);
+					construct_SUB(&code, 1);
 					break;
 				case '<':
 					construct_ADDESP(&code);

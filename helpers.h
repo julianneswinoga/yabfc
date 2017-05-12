@@ -4,6 +4,7 @@
 #include "arguments.h"
 #include "assembly.h"
 #include "elfHelper.h"
+#include "structures.h"
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
