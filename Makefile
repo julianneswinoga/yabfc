@@ -18,6 +18,9 @@ HEADERS = $(wildcard *.h)
 $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
+install: $(TARGET)
+	-cp $(TARGET) /usr/local/bin
+
 clean:
 	-rm -f *.o
 	-rm -f $(TARGET)
