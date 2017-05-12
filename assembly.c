@@ -118,8 +118,8 @@ void construct_LPEND(CODE *code) {
 	jumpBackwardCode = jumpDistance - sizeof(bracketSearchCode);
 	jumpForwardCode  = -jumpDistance + sizeof(bracketSearchCode);
 	debugPrintf("Writing jump of %i backward and %i forward\n", jumpBackwardCode, jumpForwardCode);
-	//memcpy(&code->bytes[code->size - 4], &jumpBackwardCode, 4); // Write the jump distance to the last four bytes of machine code (End loop)
-	//memcpy(&code->bytes[i + 2], &jumpForwardCode, 4);           // Write forward jump distance (Open loop)
+	memcpy(&code->bytes[code->size - 4], &jumpBackwardCode, 4); // Write the jump distance to the last four bytes of machine code (End loop)
+	memcpy(&code->bytes[i + 2], &jumpForwardCode, 4);           // Write forward jump distance (Open loop)
 }
 
 /*
