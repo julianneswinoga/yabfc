@@ -29,7 +29,7 @@ dec rax
 mov [rsp], rax
  */
 void construct_DEC(CODE *code) {
-	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC0, 0x48, 0x89, 0x04, 0x24};
+	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0xFF, 0xC8, 0x48, 0x89, 0x04, 0x24};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -67,11 +67,12 @@ void construct_SUBESP(CODE *code) {
 /*
 Jump if zero to past loop end
 
-test rsp, 0
+mov eax, [rsp]
+cmp eax, 0
 je 0x0
  */
 void construct_LPSTART(CODE *code) {
-	uint8_t machCode[] = {0x48, 0xF7, 0xC4, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x84, 0x00, 0x00, 0xFF, 0xAA};
+	uint8_t machCode[] = {0x8B, 0x04, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
 	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
@@ -88,17 +89,37 @@ Set the end loop offset to be the negative of that, 2s complement (Backward jump
 
 next_instr = current + imm + sizeof(jump machine code)
 
-test rsp, 0
+mov eax, [rsp]
+cmp eax, 0
 jne 0x0
  */
 void construct_LPEND(CODE *code) {
-	uint8_t machCode[] = {0x48, 0xF7, 0xC4, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x85, 0xFA, 0xFF, 0xFF, 0xFF};
+	uint8_t machCode[]          = {0x8B, 0x04, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x85, 0x00, 0x00, 0x00, 0x00};
+	uint8_t bracketSearchCode[] = {0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
+	int     i, jumpDistance, jumpBackwardCode, jumpForwardCode;
 
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
+	for (i = code->size; i < code->size + sizeof(machCode); i++) {
 		code->bytes[i] = machCode[i - code->size];
 	}
 	code->size += sizeof(machCode);
+
+	for (i = code->size - sizeof(machCode); i > 0; i--) {
+		if (memcmp(&code->bytes[i], bracketSearchCode, sizeof(bracketSearchCode) * sizeof(uint8_t)) == 0) {
+			jumpDistance = i - (code->size - sizeof(machCode));
+			debugPrintf("Found matching bracket %i opcodes before\n", jumpDistance);
+			break;
+		}
+	}
+	if (i == 0) {
+		fprintf(stderr, "Something went very wrong when searching for a previous bracket\n");
+		exit(1);
+	}
+
+	jumpBackwardCode = jumpDistance - sizeof(bracketSearchCode);
+	jumpForwardCode  = -jumpDistance + sizeof(bracketSearchCode);
+	memcpy(&code->bytes[code->size - 4], &jumpBackwardCode, 4); // Write the jump distance to the last four bytes of machine code (End loop)
+	memcpy(&code->bytes[i + 2], &jumpForwardCode, 4);           // Write forward jump distance (Open loop)
 }
 
 /*
