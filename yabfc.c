@@ -33,12 +33,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 
 /**
  * Main function
- * make ; and ./yabfc -v hello.bf ; and readelf output1 -a ; and hexdump -v -C output1 ; and ./output1
  * @param  argc Argument count
  * @param  argv arguments
  * @return      Program return value
  */
 int main(int argc, char *argv[]) {
+	char *outputFilename;
 	FILE *readFile, *writeFile; // Read and write file pointers
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments); // Parse the command line arguments
@@ -51,8 +51,14 @@ int main(int argc, char *argv[]) {
 
 	for (int i = 0; i < globalOptions.numFiles; i++) { // Loopint through the input files
 		debugPrintf("Opening file %s\n", arguments.args[i]);
-		readFile  = fopen(arguments.args[i], "r"); // Open file for reading
-		writeFile = fopen(strcmp(globalOptions.outputFile, "") != 0 ? globalOptions.outputFile : "output1", "w+");
+		readFile = fopen(arguments.args[i], "r"); // Open file for reading
+		if (strcmp(globalOptions.outputFile, "") != 0) {
+			writeFile = fopen(globalOptions.outputFile, "w+");
+		} else {
+			outputFilename = filenameWithoutExtension(arguments.args[i]);
+			printf("Output file: %s\n", outputFilename);
+			writeFile = fopen(outputFilename, "w+");
+		}
 
 		SECTION text, data, stringTable; // Set up sections
 		text.size         = 0;
