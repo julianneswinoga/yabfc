@@ -6,9 +6,8 @@
  * @param fmt     String format
  * @param VARARGS printf arguments
  */
-void debugPrintf(/*int level, */const char *fmt, ...) {
-	int level = 0;
-	if (globalOptions.verbose >= level) {
+void debugPrintf(int level, const char *fmt, ...) {
+	if (!globalOptions.silent && globalOptions.verbose >= level) {
 		va_list args;
 		va_start(args, fmt);
 		vprintf(fmt, args);

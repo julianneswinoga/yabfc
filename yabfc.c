@@ -53,12 +53,12 @@ int main(int argc, char *argv[]) {
 	globalOptions.silent     = arguments.silent;
 	globalOptions.outputFile = arguments.output_file;
 	if (numFiles > 1) {
-		debugPrintf("WARNING: Multiple files specified, ignoring output file flag\n");
+		debugPrintf(1, "WARNING: Multiple files specified, ignoring output file flag\n");
 		globalOptions.outputFile = "";
 	}
 
 	for (int i = 0; arguments.inputFiles[i]; i++) { // Loop through the input files
-		debugPrintf("Opening file %s\n", arguments.inputFiles[i]);
+		debugPrintf(1, "Opening file %s\n", arguments.inputFiles[i]);
 		readFile = fopen(arguments.inputFiles[i], "r"); // Open file for reading
 		if (readFile == NULL) {
 			perror("Error opening file: ");
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 			writeFile = fopen(globalOptions.outputFile, "w+");
 		} else {
 			outputFilename = filenameWithoutExtension(arguments.inputFiles[i]);
-			printf("Output file: %s\n", outputFilename);
+			debugPrintf(1, "Output file: %s\n", outputFilename);
 			writeFile = fopen(outputFilename, "w+");
 		}
 
@@ -88,17 +88,17 @@ int main(int argc, char *argv[]) {
 		               PGM_HEADER_SIZE, PGM_HEADER_NUM,
 		               SEC_HEADER_SIZE, SEC_HEADER_NUM); // Mostly set up the ELF header
 
-		debugPrintf("Constructing .text section\n");
+		debugPrintf(2, "Constructing .text section\n");
 
 		INSTRUCTIONS instructions = {
 		    .size        = 0,
 		    .instruction = malloc(0)};
 
-		debugPrintf("Program as read from file: ");
+		debugPrintf(2, "Program as read from file: ");
 		char readCharacter = 0;
 		while ((readCharacter = fgetc(readFile)) != EOF) {
 			if (strpbrk(VALID_COMMANDS, &readCharacter) != NULL) {
-				debugPrintf("%c", readCharacter);
+				debugPrintf(2, "%c", readCharacter);
 				INSTRUCTION tempInstruction = {
 				    .type         = readCharacter,
 				    .bracketMatch = -1};
@@ -107,9 +107,9 @@ int main(int argc, char *argv[]) {
 				instructions.instruction[instructions.size++] = tempInstruction;
 			}
 		}
-		debugPrintf("\n");
+		debugPrintf(2, "\n");
 
-		debugPrintf("Starting machine code generation\n");
+		debugPrintf(2, "Starting machine code generation\n");
 		CODE code = {
 		    .size  = 0,
 		    .bytes = malloc(0)};
@@ -159,7 +159,7 @@ sub rsp, 4
 					}
 					instructions.instruction[i].bracketMatch                   = relativeBracket;
 					instructions.instruction[i + relativeBracket].bracketMatch = relativeBracket;
-					debugPrintf("Opening bracket @ %i jumps forward by %i\n", i, relativeBracket);
+					debugPrintf(3, "Opening bracket @ %i jumps forward by %i\n", i, relativeBracket);
 					construct_LPSTART(&code);
 					break;
 				case ']':
@@ -167,7 +167,7 @@ sub rsp, 4
 						fprintf(stderr, "Closing bracket does not have a matching opening bracket at position %i!\n", i);
 						exit(1);
 					}
-					debugPrintf("Closing bracket @ %i jumps backward by %i\n", i, instructions.instruction[i].bracketMatch);
+					debugPrintf(3, "Closing bracket @ %i jumps backward by %i\n", i, instructions.instruction[i].bracketMatch);
 					construct_LPEND(&code);
 					break;
 				case ',':
@@ -182,14 +182,14 @@ sub rsp, 4
 
 		addSectionData(&text, code.bytes, code.size); // Add some example code
 
-		debugPrintf("Code bytesize: %i\nSection bytesize: %i\n", code.size, text.size);
+		debugPrintf(2, "Code bytesize: %i\nSection bytesize: %i\n", code.size, text.size);
 
-		debugPrintf("Constructing .data section\n");
+		debugPrintf(2, "Constructing .data section\n");
 		uint8_t tempData = '0';
 		for (int i = 0; i < 21 - 3; i++)
 			addSectionData(&data, (uint8_t *)&tempData, sizeof(tempData)); // Add some example data
 
-		debugPrintf("Constructing .shrtrab section\n");
+		debugPrintf(2, "Constructing .shrtrab section\n");
 		uint8_t stringData[] = "\0.text\0.data\0.shrtrab\0"; // Set up the string table section with the appropriate names
 		addSectionData(&stringTable, (uint8_t *)&stringData, sizeof(stringData));
 
@@ -236,25 +236,25 @@ sub rsp, 4
 
 		ELFHeader.e_shoff = SEC_HEADER_NUM == 0 ? 0x0 : TEXT_FILE_LOC + text.size + data.size + stringTable.size; // Finally determine the section header offset
 
-		debugPrintf("Writing ELF header\n");
+		debugPrintf(2, "Writing ELF header\n");
 		fwrite(&ELFHeader, 1, sizeof(ELFHeader), writeFile); // Write header information
 
-		debugPrintf("Writing program header table\n");
+		debugPrintf(2, "Writing program header table\n");
 		fwrite(&programHeaderTable, 1, sizeof(programHeaderTable), writeFile); // Write program header table
 
-		debugPrintf("Writing .text section of size %i bytes\n", text.size);
+		debugPrintf(2, "Writing .text section of size %i bytes\n", text.size);
 		fwrite(text.bytes, 1, text.size, writeFile); // Write .text
-		debugPrintf("Writing .data section of size %i bytes\n", data.size);
+		debugPrintf(2, "Writing .data section of size %i bytes\n", data.size);
 		fwrite(data.bytes, 1, data.size, writeFile); // Write .data
-		debugPrintf("Writing .shrtrab section of size %i bytes\n", stringTable.size);
+		debugPrintf(2, "Writing .shrtrab section of size %i bytes\n", stringTable.size);
 		fwrite(stringTable.bytes, 1, stringTable.size, writeFile); // Write .shrtrab
 
-		debugPrintf("Writing section header, %i sections\n", ELFHeader.e_shnum);
+		debugPrintf(2, "Writing section header, %i sections\n", ELFHeader.e_shnum);
 		fwrite(&sectionHeaderTable, 1, sizeof(sectionHeaderTable), writeFile); // Write section header table
 
-		debugPrintf("Entry point: %#08x\n", ENTRY_POINT);
+		debugPrintf(1, "Entry point: %#08x\n", ENTRY_POINT);
 
-		debugPrintf("Done processing file %s\n", arguments.inputFiles[i]);
+		debugPrintf(1, "Done processing file %s\n", arguments.inputFiles[i]);
 	}
 	fclose(readFile);  // Close read file pointer
 	fclose(writeFile); // Close write file pointer
