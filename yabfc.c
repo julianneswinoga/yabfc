@@ -114,16 +114,8 @@ int main(int argc, char *argv[]) {
 		    .size  = 0,
 		    .bytes = malloc(0)};
 
-		/*
-xor ebp, ebp
-mov r9, rdx
-pop rsi
-mov rdx, rsp
-and rsp, 0xfffffffffffffff0
-sub rsp, 4
- */
-		uint8_t preamble[] = {0x31, 0xED, 0x49, 0x89, 0xD1, 0x5E, 0x48, 0x89, 0xE2, 0x48, 0x83, 0xE4, 0xF0, 0x48, 0x83, 0xEC, 0x04}; // Preamble
-		construct_arbitrary(&code, preamble, sizeof(preamble));
+
+		construct_START(&code);
 
 		int relativeBracket, lookahead;
 		for (int i = 0; i < instructions.size; i++) {
