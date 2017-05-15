@@ -24,7 +24,7 @@ static char doc[] =
     "Compiles one or multiple brainfuck files to"
     "the ELF file format, in 64 bit mode";
 
-static char args_doc[] = "InputFiles";
+static char args_doc[] = "Files...";
 
 //The options that can be applied to the program
 static struct argp_option options[] = {
