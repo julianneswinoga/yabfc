@@ -4,8 +4,7 @@
 #include <stdbool.h>
 
 typedef struct globalOptionsStruct {
-	int   numFiles;
-	bool  verbose;
+	int   verbose;
 	bool  silent;
 	char *outputFile;
 } globalOptionsStruct;

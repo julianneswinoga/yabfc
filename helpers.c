@@ -2,11 +2,13 @@
 
 /**
  * printf function wrapper to only print when there is verbose output
+ * @param level	  Level of debug to print at
  * @param fmt     String format
  * @param VARARGS printf arguments
  */
-void debugPrintf(const char *fmt, ...) {
-	if (globalOptions.verbose) {
+void debugPrintf(/*int level, */const char *fmt, ...) {
+	int level = 0;
+	if (globalOptions.verbose >= level) {
 		va_list args;
 		va_start(args, fmt);
 		vprintf(fmt, args);
