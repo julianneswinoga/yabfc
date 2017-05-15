@@ -37,7 +37,7 @@ uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
 char *filenameWithoutExtension(char *fileName) {
 	char *ret;
 	int   i, len;
-	for (i = 0; fileName[i] != NULL && fileName[i] != '.'; i++)
+	for (i = 0; fileName[i] != '\0' && fileName[i] != '.'; i++)
 		;
 	len = i;
 	ret = malloc(sizeof(char) * len);

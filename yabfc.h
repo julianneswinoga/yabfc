@@ -45,7 +45,7 @@ struct argumentStruct {
 
 struct argumentStruct arguments = {
     .silent      = 0,
-    .verbose     = 0,
+    .verbose     = 1,
     .output_file = ""}; // Initialize an argument struct
 
 globalOptionsStruct globalOptions = {
