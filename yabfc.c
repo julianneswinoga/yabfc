@@ -114,35 +114,28 @@ int main(int argc, char *argv[]) {
 		    .size  = 0,
 		    .bytes = malloc(0)};
 
-
 		construct_START(&code);
 
 		int relativeBracket, lookahead;
 		for (int i = 0; i < instructions.size; i++) {
 			switch (instructions.instruction[i].type) {
 				case '+':
-					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '+'; lookahead++)
-						;
-					construct_ADD(&code, lookahead - i);
-					i = lookahead - 1;
-					break;
 				case '-':
-					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '-'; lookahead++)
-						;
-					construct_SUB(&code, lookahead - i);
-					i = lookahead - 1;
+					lookahead = lookahead_compress(&instructions, &i, '+', '-');
+					if (lookahead > 0) {
+						construct_ADD(&code, lookahead);
+					} else if (lookahead < 0) {
+						construct_SUB(&code, -lookahead);
+					}
 					break;
 				case '<':
-					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '<'; lookahead++)
-						;
-					construct_ADDESP(&code, (lookahead - i) * 4);
-					i = lookahead - 1;
-					break;
 				case '>':
-					for (lookahead = i; lookahead < instructions.size && instructions.instruction[lookahead].type == '>'; lookahead++)
-						;
-					construct_SUBESP(&code, (lookahead - i) * 4);
-					i = lookahead - 1;
+					lookahead = lookahead_compress(&instructions, &i, '<', '>');
+					if (lookahead > 0) {
+						construct_ADDESP(&code, lookahead * 4);
+					} else if (lookahead < 0) {
+						construct_SUBESP(&code, -lookahead * 4);
+					}
 					break;
 				case '[':
 					if ((relativeBracket = get_matching_bracket(&instructions, i)) == -1) {
