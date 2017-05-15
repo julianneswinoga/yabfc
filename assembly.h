@@ -19,6 +19,7 @@ void construct_LPSTART(CODE *);
 void construct_LPEND(CODE *);
 void construct_INPUT(CODE *);
 void construct_PRINT(CODE *);
+void construct_START(CODE *);
 void construct_END(CODE *);
 
 #endif // ASSEMBLY_H_

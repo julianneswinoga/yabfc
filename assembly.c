@@ -17,11 +17,7 @@ void construct_ADD(CODE *code, uint32_t add) {
 	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0x05, 0x00, 0x00, 0x00, 0x00, 0x48, 0x89, 0x04, 0x24};
 	memcpy(&machCode[6], &add, sizeof(add));
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -33,11 +29,7 @@ void construct_SUB(CODE *code, uint32_t sub) {
 	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x48, 0x89, 0x04, 0x24};
 	memcpy(&machCode[6], &sub, sizeof(sub));
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -47,11 +39,7 @@ void construct_ADDESP(CODE *code, uint32_t num) {
 	uint8_t machCode[] = {0x48, 0x81, 0xC4, 0x00, 0x00, 0x00, 0x00};
 	memcpy(&machCode[3], &num, sizeof(num));
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -61,11 +49,7 @@ void construct_SUBESP(CODE *code, uint32_t num) {
 	uint8_t machCode[] = {0x48, 0x81, 0xEC, 0x00, 0x00, 0x00, 0x00};
 	memcpy(&machCode[3], &num, sizeof(num));
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -78,11 +62,7 @@ je 0x0
 void construct_LPSTART(CODE *code) {
 	uint8_t machCode[] = {0x8B, 0x04, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -102,11 +82,7 @@ void construct_LPEND(CODE *code) {
 	uint8_t bracketSearchCode[] = {0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
 	int     i, jumpDistance, jumpBackwardCode, jumpForwardCode;
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 
 	for (i = code->size - sizeof(machCode); i > 0; i--) {
 		if (memcmp(&code->bytes[i], bracketSearchCode, sizeof(bracketSearchCode) * sizeof(uint8_t)) == 0) {
@@ -136,11 +112,7 @@ syscall
 void construct_INPUT(CODE *code) {
 	uint8_t machCode[] = {0x48, 0xC7, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x48, 0x89, 0xE6, 0x48, 0xC7, 0xC7, 0x00, 0x00, 0x00, 0x00, 0x48, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x05};
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -153,11 +125,21 @@ syscall
 void construct_PRINT(CODE *code) {
 	uint8_t machCode[] = {0x48, 0xC7, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x48, 0x89, 0xE6, 0x48, 0xC7, 0xC7, 0x01, 0x00, 0x00, 0x00, 0x48, 0xC7, 0xC0, 0x01, 0x00, 0x00, 0x00, 0x0F, 0x05};
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
+}
+
+/*
+xor ebp, ebp
+mov r9, rdx
+pop rsi
+mov rdx, rsp
+and rsp, 0xfffffffffffffff0
+sub rsp, 4
+ */
+void construct_START(CODE *code) {
+	uint8_t machCode[] = {0x31, 0xED, 0x49, 0x89, 0xD1, 0x5E, 0x48, 0x89, 0xE2, 0x48, 0x83, 0xE4, 0xF0, 0x48, 0x83, 0xEC, 0x04};
+
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
 
 /*
@@ -168,9 +150,5 @@ int 0x80
 void construct_END(CODE *code) {
 	uint8_t machCode[] = {0x48, 0xC7, 0xC0, 0x01, 0x00, 0x00, 0x00, 0x48, 0xC7, 0xC3, 0x00, 0x00, 0x00, 0x00, 0xCD, 0x80};
 
-	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + sizeof(machCode)) * sizeof(uint8_t));
-	for (int i = code->size; i < code->size + sizeof(machCode); i++) {
-		code->bytes[i] = machCode[i - code->size];
-	}
-	code->size += sizeof(machCode);
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
