@@ -13,12 +13,15 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	switch (key) { // Switch for setting the argument values
 		case 'q':
 		case 's': arguments->silent      = 1; break;
-		case 'v': arguments->verbose     = 1; break;
+		case 'v': arguments->verbose     = arg ? atoi(arg) : 2; break;
 		case 'o': arguments->output_file = arg; break;
 
-		case ARGP_KEY_ARG:
-			arguments->args[state->arg_num] = arg;
-			globalOptions.numFiles++;
+		case ARGP_KEY_NO_ARGS:
+			argp_usage(state);
+
+		case ARGP_KEY_ARGS:
+			arguments->inputFiles = &state->argv[state->next];
+			state->next           = state->argc;
 			break;
 
 		case ARGP_KEY_END:
@@ -38,24 +41,33 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
  * @return      Program return value
  */
 int main(int argc, char *argv[]) {
+	int   numFiles;
 	char *outputFilename;
 	FILE *readFile, *writeFile; // Read and write file pointers
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments); // Parse the command line arguments
-	globalOptions.verbose    = arguments.verbose;    // Setting global options
+
+	for (numFiles = 0; arguments.inputFiles[numFiles]; numFiles++) // Count the number of input files
+		;
+	globalOptions.verbose    = arguments.verbose;
+	globalOptions.silent     = arguments.silent;
 	globalOptions.outputFile = arguments.output_file;
-	if (strcmp(globalOptions.outputFile, "") != 0) { // Output file specified
-		if (globalOptions.numFiles > 1) printf("WARNING: Only compiling first file (output file specified)\n");
-		globalOptions.numFiles = 1;
+	if (numFiles > 1) {
+		debugPrintf("WARNING: Multiple files specified, ignoring output file flag\n");
+		globalOptions.outputFile = "";
 	}
 
-	for (int i = 0; i < globalOptions.numFiles; i++) { // Loopint through the input files
-		debugPrintf("Opening file %s\n", arguments.args[i]);
-		readFile = fopen(arguments.args[i], "r"); // Open file for reading
+	for (int i = 0; arguments.inputFiles[i]; i++) { // Loop through the input files
+		debugPrintf("Opening file %s\n", arguments.inputFiles[i]);
+		readFile = fopen(arguments.inputFiles[i], "r"); // Open file for reading
+		if (readFile == NULL) {
+			perror("Error opening file: ");
+			exit(1);
+		}
 		if (strcmp(globalOptions.outputFile, "") != 0) {
 			writeFile = fopen(globalOptions.outputFile, "w+");
 		} else {
-			outputFilename = filenameWithoutExtension(arguments.args[i]);
+			outputFilename = filenameWithoutExtension(arguments.inputFiles[i]);
 			printf("Output file: %s\n", outputFilename);
 			writeFile = fopen(outputFilename, "w+");
 		}
@@ -242,7 +254,7 @@ sub rsp, 4
 
 		debugPrintf("Entry point: %#08x\n", ENTRY_POINT);
 
-		debugPrintf("Done processing file %s\n", arguments.args[i]);
+		debugPrintf("Done processing file %s\n", arguments.inputFiles[i]);
 	}
 	fclose(readFile);  // Close read file pointer
 	fclose(writeFile); // Close write file pointer

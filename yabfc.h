@@ -17,35 +17,39 @@
 static error_t parse_opt(int, char *, struct argp_state *);
 
 // Author information
-const char *argp_program_version     = "bfcompiler 0.1";
+const char *argp_program_version     = "yabfc 1.0";
 const char *argp_program_bug_address = "<cameronswinoga@gmail.com>";
-static char doc[]                    = "Documentation";
-static char args_doc[]               = "InputFiles";
+
+static char doc[] =
+    "Compiles one or multiple brainfuck files to"
+    "the ELF file format, in 64 bit mode";
+
+static char args_doc[] = "InputFiles";
 
 //The options that can be applied to the program
-static struct argp_option options[] = {{"verbose", 'v', 0, 0, "Produce verbose output"},
-                                       {"quiet", 'q', 0, 0, "Don't produce any output"},
-                                       {"silent", 's', 0, OPTION_ALIAS},
-                                       {"output", 'o', "FILE", 0, "Output to FILE"},
-                                       {0}};
+static struct argp_option options[] = {
+    {"quiet", 'q', 0, 0, "Do not produce any output"},
+    {"silent", 's', 0, OPTION_ALIAS},
+    {"output", 'o', "FILE", 0, "Output to FILE"},
+    {"verbose", 'v', "LEVEL", OPTION_ARG_OPTIONAL, "Set verbosity to LEVEL 1,2 or 3 (default 2)"},
+
+    {0}};
 
 // Structure to hold the arguments
 struct argumentStruct {
-	char *args[64];
-	int   silent, verbose;
-	char *output_file;
-	int   numFiles;
+	char **inputFiles;
+	int    silent;
+	int    verbose;
+	char * output_file;
 };
 
 struct argumentStruct arguments = {
     .silent      = 0,
     .verbose     = 0,
-    .output_file = "",
-    .numFiles    = 0}; // Initialize an argument struct
+    .output_file = ""}; // Initialize an argument struct
 
 globalOptionsStruct globalOptions = {
-    .numFiles   = 0,
-    .verbose    = false,
+    .verbose    = 0,
     .silent     = false,
     .outputFile = ""}; // Program arguments that should be globally shared
 
