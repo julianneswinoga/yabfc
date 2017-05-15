@@ -1,5 +1,11 @@
 #include "assembly.h"
 
+/**
+ * Construct arbitrary machine code
+ * @param code     A pointer to the current CODE struct
+ * @param machCode An array of machine code bytes to add
+ * @param size     The size of the machine code array being added
+ */
 void construct_arbitrary(CODE *code, uint8_t *machCode, uint16_t size) {
 	code->bytes = (uint8_t *)realloc(code->bytes, (code->size + size * sizeof(uint8_t)));
 	for (int i = code->size; i < code->size + size; i++) {
