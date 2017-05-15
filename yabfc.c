@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
 
 		debugPrintf(2, "Constructing .data section\n");
 		uint8_t tempData = '0';
-		for (int i = 0; i < 21 - 3; i++)
+		for (int i = 0; i < 0; i++)
 			addSectionData(&data, (uint8_t *)&tempData, sizeof(tempData)); // Add some example data
 
 		debugPrintf(2, "Constructing .shrtrab section\n");
