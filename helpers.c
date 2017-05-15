@@ -16,7 +16,7 @@ void debugPrintf(const char *fmt, ...) {
 
 /**
  * Function to find the starting index of a string from a null-terminated string character array
- * @param  stringData Tnull-terminated string character array
+ * @param  stringData A null-terminated string character array
  * @param  index      Index of string to get
  * @return            Starting index of the requested string
  */
@@ -26,6 +26,25 @@ uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
 		if (*(stringData + i) == '\0') stringIndex++; // Increment the string index if we are on a null character
 
 	return i; // Return the index
+}
+
+/**
+ * Function that returns a filename without an extension on it
+ * @param  fileName The full filename
+ * @return 			The filename stripped of the extension
+ */
+char *filenameWithoutExtension(char *fileName) {
+	char *ret;
+	int   i, len;
+	for (i = 0; fileName[i] != NULL && fileName[i] != '.'; i++)
+		;
+	len = i;
+	ret = malloc(sizeof(char) * len);
+	for (i = 0; i < len; i++) {
+		ret[i] = fileName[i];
+	}
+	ret[i] = '\0';
+	return ret;
 }
 
 /**
