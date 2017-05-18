@@ -5,6 +5,7 @@
 
 typedef struct globalOptionsStruct {
 	int   verbose;
+	int   optimize;
 	bool  silent;
 	char *outputFile;
 } globalOptionsStruct;

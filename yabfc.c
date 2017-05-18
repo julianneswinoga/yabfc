@@ -15,6 +15,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 		case 's': arguments->silent      = 1; break;
 		case 'v': arguments->verbose     = arg ? atoi(arg) : 2; break;
 		case 'o': arguments->output_file = arg; break;
+		case 'O': arguments->optimize    = arg ? atoi(arg) : 2; break;
 
 		case ARGP_KEY_NO_ARGS:
 			argp_usage(state);
@@ -49,9 +50,17 @@ int main(int argc, char *argv[]) {
 
 	for (numFiles = 0; arguments.inputFiles[numFiles]; numFiles++) // Count the number of input files
 		;
+	globalOptions.optimize   = arguments.optimize;
 	globalOptions.verbose    = arguments.verbose;
 	globalOptions.silent     = arguments.silent;
 	globalOptions.outputFile = arguments.output_file;
+
+	debugPrintf(1, "Optimization level: %i\nVerbosity level: %i\nSilent mode: %s\nOutput file: %s\n",
+	            globalOptions.optimize,
+	            globalOptions.verbose,
+	            globalOptions.silent ? "true" : "false",
+	            globalOptions.outputFile);
+
 	if (numFiles > 1) {
 		debugPrintf(1, "WARNING: Multiple files specified, ignoring output file flag\n");
 		globalOptions.outputFile = "";
@@ -121,20 +130,36 @@ int main(int argc, char *argv[]) {
 			switch (instructions.instruction[i].type) {
 				case '+':
 				case '-':
-					lookahead = lookahead_compress(&instructions, &i, '+', '-');
-					if (lookahead > 0) {
-						construct_ADD(&code, lookahead);
-					} else if (lookahead < 0) {
-						construct_SUB(&code, -lookahead);
+					if (globalOptions.optimize >= 1) {
+						lookahead = lookahead_compress(&instructions, &i, '+', '-');
+						if (lookahead > 0) {
+							construct_ADD(&code, lookahead);
+						} else if (lookahead < 0) {
+							construct_SUB(&code, -lookahead);
+						}
+					} else {
+						if (instructions.instruction[i].type == '+') {
+							construct_ADD(&code, 1);
+						} else if (instructions.instruction[i].type == '-') {
+							construct_SUB(&code, 1);
+						}
 					}
 					break;
 				case '<':
 				case '>':
-					lookahead = lookahead_compress(&instructions, &i, '<', '>');
-					if (lookahead > 0) {
-						construct_ADDESP(&code, lookahead * 4);
-					} else if (lookahead < 0) {
-						construct_SUBESP(&code, -lookahead * 4);
+					if (globalOptions.optimize >= 1) {
+						lookahead = lookahead_compress(&instructions, &i, '<', '>');
+						if (lookahead > 0) {
+							construct_ADDESP(&code, lookahead * 4);
+						} else if (lookahead < 0) {
+							construct_SUBESP(&code, -lookahead * 4);
+						}
+					} else {
+						if (instructions.instruction[i].type == '<') {
+							construct_ADDESP(&code, 4);
+						} else if (instructions.instruction[i].type == '>') {
+							construct_SUBESP(&code, 4);
+						}
 					}
 					break;
 				case '[':
