@@ -32,6 +32,7 @@ static struct argp_option options[] = {
     {"silent", 's', 0, OPTION_ALIAS},
     {"output", 'o', "FILE", 0, "Output to FILE"},
     {"verbose", 'v', "LEVEL", OPTION_ARG_OPTIONAL, "Set verbosity to LEVEL 1,2 or 3 (default 2)"},
+    {"optimize", 'O', "LEVEL", OPTION_ARG_OPTIONAL, "Set optimization to LEVEL 1,2 or 3 (default 2)"},
 
     {0}};
 
@@ -40,16 +41,19 @@ struct argumentStruct {
 	char **inputFiles;
 	int    silent;
 	int    verbose;
+	int    optimize;
 	char * output_file;
 };
 
 struct argumentStruct arguments = {
     .silent      = 0,
     .verbose     = 1,
+    .optimize    = 2,
     .output_file = ""}; // Initialize an argument struct
 
 globalOptionsStruct globalOptions = {
     .verbose    = 0,
+    .optimize   = 0,
     .silent     = false,
     .outputFile = ""}; // Program arguments that should be globally shared
 
