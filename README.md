@@ -1,5 +1,15 @@
 # **Y**et **A**nother **B**rain**F**uck **C**ompiler
-## Options
+
+## Description
+YABFC is an optimizing compiler for the brainfuck language that uses no dependencies apart from standard POSIX headers.
+The output format is a 64 bit ELF executable file.
+
+## Building
+``` BASH
+make && sudo make install
+```
+
+## Usage
 ``` BASH
 Usage: yabfc [OPTION...] Files...
 Compiles one or multiple brainfuck files tothe ELF file format, in 64 bit mode
@@ -16,3 +26,6 @@ for any corresponding short options.
 
 Report bugs to <cameronswinoga@gmail.com>.
 ```
+
+## Implementation
+The data pointer in the executable is representated by the assembly stack pointer, as such and new stack allocation is guaranteed to be zeroed initially.  Because of this, as well as the executable being set in 64 bit mode, allows YABFC to have an extremely large value range.  The size for the data pointer is the stack size and the cell size is 2<sup>64</sup>.
