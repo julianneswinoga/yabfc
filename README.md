@@ -15,6 +15,7 @@ Usage: yabfc [OPTION...] Files...
 Compiles one or multiple brainfuck files tothe ELF file format, in 64 bit mode
 
   -o, --output=FILE          Output to FILE
+  -O, --optimize[=LEVEL]     Set optimization to LEVEL 1,2 or 3 (default 2)
   -q, -s, --quiet, --silent  Do not produce any output
   -v, --verbose[=LEVEL]      Set verbosity to LEVEL 1,2 or 3 (default 2)
   -?, --help                 Give this help list
