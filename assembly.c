@@ -158,3 +158,13 @@ void construct_END(CODE *code) {
 
 	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
+
+/*
+mov rax, 0
+mov [rsp], rax
+ */
+void construct_CLEAR(CODE *code) {
+	uint8_t machCode[] = {0x48, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x48, 0x89, 0x04, 0x24};
+
+	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
+}
