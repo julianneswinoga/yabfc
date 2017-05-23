@@ -21,5 +21,6 @@ void construct_INPUT(CODE *);
 void construct_PRINT(CODE *);
 void construct_START(CODE *);
 void construct_END(CODE *);
+void construct_CLEAR(CODE *);
 
 #endif // ASSEMBLY_H_
