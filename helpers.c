@@ -89,27 +89,3 @@ int get_matching_bracket(INSTRUCTIONS *instructions, int position) {
 	}
 	return -1; // Bracket not found
 }
-
-/**
- * Compresses superfluous instructions into a single positive or negative number
- * @param  instructions A pointer to an INSTRUCTIONS type to read characters from
- * @param  position     A pointer to the current position being read
- * @param  inc          What character specifies a `+1`
- * @param  dec          What character specifies a `-1`
- * @return              A number that represents the compressed instruction string
- */
-int lookahead_compress(INSTRUCTIONS *instructions, int *position, char inc, char dec) {
-	int count = 0;
-	while ((*position) < instructions->size &&
-	       (instructions->instruction[(*position)].type == inc ||
-	        instructions->instruction[(*position)].type == dec)) { // While we are less than the array size and we are reading valid characters
-		if (instructions->instruction[(*position)].type == inc) {
-			count++;
-		} else {
-			count--;
-		}
-		(*position)++;
-	}
-	(*position)--; // Decrement to get us back to the last character we should be on
-	return count;
-}
