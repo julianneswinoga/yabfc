@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
 
 		construct_START(&code);
 
-		int relativeBracket, lookahead;
+		int relativeBracket;
 		for (int i = 0; i < instructions.size; i++) {
 
 			if (optimize_compress_PTR(&instructions, &i, &code) ||
@@ -174,7 +174,12 @@ int main(int argc, char *argv[]) {
 		}
 		construct_END(&code);
 
-		addSectionData(&text, code.bytes, code.size); // Add some example code
+		addSectionData(&text, code.bytes, code.size); // Add the .text
+
+		debugPrintf(2, "Optimization results:\n"
+		               "\tADDSUB compression: %i\n"
+		               "\tPTR compression: %i\n",
+		            total_ADDSUB_compress, total_PTR_compress);
 
 		debugPrintf(2, "Code bytesize: %i\nSection bytesize: %i\n", code.size, text.size);
 
