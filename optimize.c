@@ -59,9 +59,9 @@ bool optimize_compress_PTR(INSTRUCTIONS *instructions, int *position, CODE *code
 	} else {
 		total_PTR_compress += count < 0 ? -count : count;
 		if (count > 0) {
-			construct_ADDESP(code, count * 4);
+			construct_ADDESP(code, count * SIZEOFSTACKADDRESS);
 		} else if (count < 0) {
-			construct_SUBESP(code, -count * 4);
+			construct_SUBESP(code, -count * SIZEOFSTACKADDRESS);
 		}
 		return true;
 	}
