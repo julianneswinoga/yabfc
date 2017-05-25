@@ -110,9 +110,11 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 			return false;
 		current++;
 	}
+
 	debugPrintf(3, "Multiply of %i, %i\n", a, b);
+	construct_MULTIPLY(code, a, b);
+	(*position) += totalCharacters - 1;
 	total_MULTIPLY += 1;
-	(*position) += totalCharacters;
 
 	return true;
 }

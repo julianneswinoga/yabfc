@@ -24,5 +24,6 @@ void construct_PRINT(CODE *);
 void construct_START(CODE *);
 void construct_END(CODE *);
 void construct_CLEAR(CODE *);
+void construct_MULTIPLY(CODE *, int, int);
 
 #endif // ASSEMBLY_H_
