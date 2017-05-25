@@ -128,9 +128,10 @@ int main(int argc, char *argv[]) {
 		int relativeBracket;
 		for (int i = 0; i < instructions.size; i++) {
 
-			if (optimize_compress_PTR(&instructions, &i, &code) ||
-			    optimize_compress_ADDSUB(&instructions, &i, &code) ||
-			    optimize_clear_loop(&instructions, &i, &code)) {
+			if (optimize_compress_PTR(&instructions, &i, &code) | // Bitwise OR to prevent short circuit evaluation
+			    optimize_compress_ADDSUB(&instructions, &i, &code) |
+			    optimize_clear_loop(&instructions, &i, &code) |
+			    optimize_multiplication(&instructions, &i, &code)) {
 				continue;
 			}
 
@@ -180,8 +181,9 @@ int main(int argc, char *argv[]) {
 		debugPrintf(2, "Optimization results:\n"
 		               "\tADDSUB compression: %i\n"
 		               "\tPTR compression: %i\n"
-		               "\tLOOPCLEAR compression: %i\n",
-		            total_ADDSUB_compress, total_PTR_compress, total_CLEARLOOP);
+		               "\tLOOPCLEAR optimization: %i\n"
+		               "\tMULTIPLY optimization: %i\n",
+		            total_ADDSUB_compress, total_PTR_compress, total_CLEARLOOP, total_MULTIPLY);
 
 		debugPrintf(2, "Code bytesize: %i\nSection bytesize: %i\n", code.size, text.size);
 
