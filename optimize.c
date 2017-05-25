@@ -3,6 +3,7 @@
 int total_ADDSUB_compress = 0;
 int total_PTR_compress    = 0;
 int total_CLEARLOOP       = 0;
+int total_MULTIPLY        = 0;
 
 /**
  * Compresses superfluous instructions into a single positive or negative number
@@ -67,7 +68,7 @@ bool optimize_compress_PTR(INSTRUCTIONS *instructions, int *position, CODE *code
 }
 
 bool optimize_clear_loop(INSTRUCTIONS *instructions, int *position, CODE *code) {
-	if (globalOptions.optimize < 1) // Only do on optimization level 1 and higher
+	if (globalOptions.optimize < 2) // Only do on optimization level 2 and higher
 		return false;
 
 	char clearLoop[] = "[-]";
@@ -78,8 +79,40 @@ bool optimize_clear_loop(INSTRUCTIONS *instructions, int *position, CODE *code) 
 	}
 
 	construct_CLEAR(code);
-	(*position) += sizeof(clearLoop) - 1;
+	(*position) += sizeof(clearLoop) - 2;
 	total_CLEARLOOP += 1;
+
+	return true;
+}
+
+bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *code) {
+	if (globalOptions.optimize < 3) // Only do on optimization level 2 and higher
+		return false;
+
+	char multiply[] = "[->\x01>\x02<<]";
+	int  a = 0, b = 0, totalCharacters = sizeof(multiply) - 1, current = (*position);
+	int  i, before;
+	for (i = 0; i < sizeof(multiply) - 1; i++) {
+		if (multiply[i] == '\x01') {
+			before = current;
+			a      = lookahead_compress(instructions, &current, '+', '-');
+			totalCharacters += current - before;
+			current++;
+			continue;
+		} else if (multiply[i] == '\x02') {
+			before = current;
+			b      = lookahead_compress(instructions, &current, '+', '-');
+			totalCharacters += current - before;
+			current++;
+			continue;
+		}
+		if (instructions->instruction[current].type != multiply[i])
+			return false;
+		current++;
+	}
+	debugPrintf(3, "Multiply of %i, %i\n", a, b);
+	total_MULTIPLY += 1;
+	(*position) += totalCharacters;
 
 	return true;
 }
