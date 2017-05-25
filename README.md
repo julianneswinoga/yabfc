@@ -10,7 +10,7 @@ make && sudo make install
 ```
 
 ## Usage
-``` BASH
+``` Text
 Usage: yabfc [OPTION...] Files...
 Compiles one or multiple brainfuck files to the ELF file format, in 64 bit mode
 
