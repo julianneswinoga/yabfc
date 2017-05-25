@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define SIZEOFSTACKADDRESS (8)
+
 // Function declarations
 void construct_arbitrary(CODE *, uint8_t *, uint16_t);
 void construct_ADD(CODE *, uint32_t);

@@ -66,7 +66,7 @@ cmp eax, 0
 je 0x0
  */
 void construct_LPSTART(CODE *code) {
-	uint8_t machCode[] = {0x8B, 0x04, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
+	uint8_t machCode[] = {0x48, 0x8B, 0x04, 0x24, 0x48, 0x83, 0xF8, 0x00, 0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
 
 	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }
@@ -79,12 +79,12 @@ Set the end loop offset to be the negative of that, 2s complement (Backward jump
 
 next_instr = current + imm + sizeof(jump machine code)
 
-mov eax, [rsp]
-cmp eax, 0
+mov rax, [rsp]
+cmp rax, 0
 jne 0x0
  */
 void construct_LPEND(CODE *code) {
-	uint8_t machCode[]          = {0x8B, 0x04, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x85, 0x00, 0x00, 0x00, 0x00};
+	uint8_t machCode[]          = {0x48, 0x8B, 0x04, 0x24, 0x48, 0x83, 0xF8, 0x00, 0x0F, 0x85, 0x00, 0x00, 0x00, 0x00};
 	uint8_t bracketSearchCode[] = {0x0F, 0x84, 0x00, 0x00, 0x00, 0x00};
 	int     i, jumpDistance, jumpBackwardCode, jumpForwardCode;
 
@@ -101,8 +101,8 @@ void construct_LPEND(CODE *code) {
 		exit(1);
 	}
 
-	jumpBackwardCode = jumpDistance - sizeof(bracketSearchCode);
-	jumpForwardCode  = -jumpDistance + sizeof(bracketSearchCode);
+	jumpBackwardCode = jumpDistance - sizeof(bracketSearchCode) - 2;
+	jumpForwardCode  = -jumpDistance + sizeof(bracketSearchCode) + 2;
 	debugPrintf(3, "Writing jump of %i backward and %i forward\n", jumpBackwardCode, jumpForwardCode);
 	memcpy(&code->bytes[code->size - 4], &jumpBackwardCode, 4); // Write the jump distance to the last four bytes of machine code (End loop)
 	memcpy(&code->bytes[i + 2], &jumpForwardCode, 4);           // Write forward jump distance (Open loop)
@@ -140,10 +140,10 @@ mov r9, rdx
 pop rsi
 mov rdx, rsp
 and rsp, 0xfffffffffffffff0
-sub rsp, 4
+sub rsp, 8
  */
 void construct_START(CODE *code) {
-	uint8_t machCode[] = {0x31, 0xED, 0x49, 0x89, 0xD1, 0x5E, 0x48, 0x89, 0xE2, 0x48, 0x83, 0xE4, 0xF0, 0x48, 0x83, 0xEC, 0x04};
+	uint8_t machCode[] = {0x31, 0xED, 0x49, 0x89, 0xD1, 0x5E, 0x48, 0x89, 0xE2, 0x48, 0x83, 0xE4, 0xF0, 0x48, 0x83, 0xEC, 0x08};
 
 	construct_arbitrary(code, (uint8_t *)&machCode, sizeof(machCode));
 }

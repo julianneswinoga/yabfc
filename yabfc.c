@@ -143,10 +143,10 @@ int main(int argc, char *argv[]) {
 					construct_SUB(&code, 1);
 					break;
 				case '<':
-					construct_ADDESP(&code, 4);
+					construct_ADDESP(&code, SIZEOFSTACKADDRESS);
 					break;
 				case '>':
-					construct_SUBESP(&code, 4);
+					construct_SUBESP(&code, SIZEOFSTACKADDRESS);
 					break;
 				case '[':
 					if ((relativeBracket = get_matching_bracket(&instructions, i)) == -1) {
