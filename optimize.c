@@ -86,7 +86,7 @@ bool optimize_clear_loop(INSTRUCTIONS *instructions, int *position, CODE *code) 
 }
 
 bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *code) {
-	if (globalOptions.optimize < 3) // Only do on optimization level 2 and higher
+	if (globalOptions.optimize < 2) // Only do on optimization level 2 and higher
 		return false;
 
 	char multiply[] = "[->\x01>\x02<<]";
