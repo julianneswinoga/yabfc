@@ -125,7 +125,6 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 					}
 					memsize = p + 1;
 				}
-
 				break;
 		}
 	}
@@ -145,6 +144,9 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 			debugPrintf(2, " %s", "NUL");
 		} else {
 			debugPrintf(2, " %i", mem[i]);
+			if (mem[i] < 0) {
+				printf("\n\nMULTIPLY BY NEGATIVE %i\n\n", mem[i]);
+			}
 			construct_MULTIPLY(code, i, mem[i]);
 		}
 	}
