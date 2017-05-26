@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 		debugPrintf(2, "Program as read from file: ");
 		char readCharacter = 0;
 		while ((readCharacter = fgetc(readFile)) != EOF) {
-			if (strpbrk(VALID_COMMANDS, &readCharacter) != NULL) {
+			if (strchr(VALID_COMMANDS, readCharacter) != NULL) {
 				debugPrintf(2, "%c", readCharacter);
 				INSTRUCTION tempInstruction = {
 				    .type         = readCharacter,
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 					construct_SUBESP(&code, SIZEOFSTACKADDRESS);
 					break;
 				case '[':
-					if ((relativeBracket = get_matching_bracket(&instructions, i)) == -1) {
+					if ((relativeBracket = get_matching_bracket(&instructions, i, true)) == -1) {
 						fprintf(stderr, "Opening bracket does not have a matching closing bracket at position %i!\n", i);
 						exit(1);
 					}
