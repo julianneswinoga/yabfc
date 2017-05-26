@@ -86,35 +86,74 @@ bool optimize_clear_loop(INSTRUCTIONS *instructions, int *position, CODE *code) 
 }
 
 bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *code) {
-	if (globalOptions.optimize < 2) // Only do on optimization level 2 and higher
+	if (globalOptions.optimize < 3) // Only do on optimization level 3 and higher
 		return false;
 
-	char multiply[] = "[->\x01>\x02<<]";
-	int  a = 0, b = 0, totalCharacters = sizeof(multiply) - 1, current = (*position);
-	int  i, before;
-	for (i = 0; i < sizeof(multiply) - 1; i++) {
-		if (multiply[i] == '\x01') {
-			before = current;
-			a      = lookahead_compress(instructions, &current, '+', '-');
-			totalCharacters += current - before;
-			current++;
-			continue;
-		} else if (multiply[i] == '\x02') {
-			before = current;
-			b      = lookahead_compress(instructions, &current, '+', '-');
-			totalCharacters += current - before;
-			current++;
-			continue;
-		}
-		if (instructions->instruction[current].type != multiply[i])
+	int startbracket = (*position), endbracket;
+
+	if ((endbracket = get_matching_bracket(instructions, startbracket, false)) == -1) { // Check we are in a 'leaf' loop
+		return false;
+	}
+	endbracket += startbracket; // Turn a relative offset into an absolute number
+
+	uint16_t memsize = 1;
+	int *    mem     = malloc(memsize * sizeof(int));
+	mem[0]           = -1;
+	int p            = 0;
+	for (int i = startbracket + 1; i < endbracket; i++) {
+		if (strchr("><+-", instructions->instruction[i].type) == NULL) { // Check that the loop only contains arithmetic instructions
+			free(mem);
 			return false;
-		current++;
+		}
+		switch (instructions->instruction[i].type) { // Interpret the loop
+			case '+':
+			case '-':
+				mem[p] = (mem[p] == -1 ? lookahead_compress(instructions, &i, '+', '-')            // New memory
+				                       : mem[p] + lookahead_compress(instructions, &i, '+', '-')); // Old memory
+				break;
+			case '>':
+			case '<':
+				p += lookahead_compress(instructions, &i, '>', '<');
+				if (p < 0) {
+					free(mem);
+					return false;
+				}
+				if (p > memsize - 1) {
+					mem = (int *)realloc(mem, (p + 1) * sizeof(int));
+					for (int j = memsize; j < p + 1; j++) {
+						mem[j] = -1; // Set newly allocated memory to -1
+					}
+					memsize = p + 1;
+				}
+
+				break;
+		}
 	}
 
-	debugPrintf(3, "Multiply of %i, %i\n", a, b);
-	construct_MULTIPLY(code, a, b);
-	(*position) += totalCharacters - 1;
-	total_MULTIPLY += 1;
+	for (int i = 0; i < memsize; i++) {
+		debugPrintf(2, "[%i]", mem[i]);
+	}
 
+	if (p != 0 || mem[0] != -1) {
+		free(mem);
+		return false;
+	}
+
+	debugPrintf(2, "Multiply of");
+	for (int i = 1; i < memsize; i++) {
+		if (mem[i] == -1) {
+			debugPrintf(2, " %s", "NUL");
+		} else {
+			debugPrintf(2, " %i", mem[i]);
+			construct_MULTIPLY(code, i, mem[i]);
+		}
+	}
+	construct_CLEAR(code);
+	debugPrintf(2, "\n");
+
+	total_MULTIPLY += memsize - 1;
+	printf("START: %i END: %i\n", startbracket, endbracket);
+	(*position) += endbracket - startbracket;
+	free(mem);
 	return true;
 }
