@@ -98,7 +98,7 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 
 	uint16_t memsize = 1;
 	int *    mem     = malloc(memsize * sizeof(int));
-	mem[0]           = -1;
+	mem[0]           = -99;
 	int p            = 0;
 	for (int i = startbracket + 1; i < endbracket; i++) {
 		if (strchr("><+-", instructions->instruction[i].type) == NULL) { // Check that the loop only contains arithmetic instructions
@@ -108,8 +108,8 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 		switch (instructions->instruction[i].type) { // Interpret the loop
 			case '+':
 			case '-':
-				mem[p] = (mem[p] == -1 ? lookahead_compress(instructions, &i, '+', '-')            // New memory
-				                       : mem[p] + lookahead_compress(instructions, &i, '+', '-')); // Old memory
+				mem[p] = mem[p] == -99 ? lookahead_compress(instructions, &i, '+', '-')
+				                       : mem[p] + lookahead_compress(instructions, &i, '+', '-');
 				break;
 			case '>':
 			case '<':
@@ -121,16 +121,12 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 				if (p > memsize - 1) {
 					mem = (int *)realloc(mem, (p + 1) * sizeof(int));
 					for (int j = memsize; j < p + 1; j++) {
-						mem[j] = -1; // Set newly allocated memory to -1
+						mem[j] = -99; // Set newly allocated memory to 0
 					}
 					memsize = p + 1;
 				}
 				break;
 		}
-	}
-
-	for (int i = 0; i < memsize; i++) {
-		debugPrintf(2, "[%i]", mem[i]);
 	}
 
 	if (p != 0 || mem[0] != -1) {
@@ -140,22 +136,18 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 
 	debugPrintf(2, "Multiply of");
 	for (int i = 1; i < memsize; i++) {
-		if (mem[i] == -1) {
+		if (mem[i] == -99) {
 			debugPrintf(2, " %s", "NUL");
 		} else {
 			debugPrintf(2, " %i", mem[i]);
-			if (mem[i] < 0) {
-				printf("\n\nMULTIPLY BY NEGATIVE %i\n\n", mem[i]);
-			}
-			construct_MULTIPLY(code, i, mem[i]);
+			construct_MULTIPLY(code, mem[i], i);
+			total_MULTIPLY += 1;
 		}
 	}
-	construct_CLEAR(code);
 	debugPrintf(2, "\n");
+	construct_CLEAR(code); // Clear the initial pointer
 
-	total_MULTIPLY += memsize - 1;
-	printf("START: %i END: %i\n", startbracket, endbracket);
-	(*position) += endbracket - startbracket;
+	(*position) += endbracket - startbracket; // Move to the next instruction
 	free(mem);
 	return true;
 }
