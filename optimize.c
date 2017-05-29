@@ -98,7 +98,7 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 
 	uint16_t memsize = 1;
 	int *    mem     = malloc(memsize * sizeof(int));
-	mem[0]           = -99;
+	mem[0]           = 0;
 	int p            = 0;
 	for (int i = startbracket + 1; i < endbracket; i++) {
 		if (strchr("><+-", instructions->instruction[i].type) == NULL) { // Check that the loop only contains arithmetic instructions
@@ -108,8 +108,7 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 		switch (instructions->instruction[i].type) { // Interpret the loop
 			case '+':
 			case '-':
-				mem[p] = mem[p] == -99 ? lookahead_compress(instructions, &i, '+', '-')
-				                       : mem[p] + lookahead_compress(instructions, &i, '+', '-');
+				mem[p] = mem[p] + lookahead_compress(instructions, &i, '+', '-');
 				break;
 			case '>':
 			case '<':
@@ -121,7 +120,7 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 				if (p > memsize - 1) {
 					mem = (int *)realloc(mem, (p + 1) * sizeof(int));
 					for (int j = memsize; j < p + 1; j++) {
-						mem[j] = -99; // Set newly allocated memory to 0
+						mem[j] = 0; // Set newly allocated memory to 0
 					}
 					memsize = p + 1;
 				}
@@ -136,7 +135,7 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 
 	debugPrintf(2, "Multiply of");
 	for (int i = 1; i < memsize; i++) {
-		if (mem[i] == -99) {
+		if (mem[i] == 0) {
 			debugPrintf(2, " %s", "NUL");
 		} else {
 			debugPrintf(2, " %i", mem[i]);
