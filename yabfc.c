@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
 		                   SHT_PROGBITS,                                      /* Type of segment*/
 		                   SHF_ALLOC + SHF_EXECINSTR,                         /* Section permissions */
 		                   TEXT_MEM_LOC,                                      /* Section memory location */
-		                   TEXT_FILE_LOC,                                     /* Section memory location */
+		                   TEXT_FILE_LOC,                                     /* Section file location */
 		                   text.size                                          /* Segment size */
 		                   );
 		setupSectionHeader(&sectionHeaderTable[2], /* .data header */
