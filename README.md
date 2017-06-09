@@ -2,7 +2,7 @@
 
 ## Description
 YABFC is an optimizing compiler for the brainfuck language that uses no dependencies apart from standard POSIX headers.
-The output format is a 64 bit ELF executable file.
+The output format is a 64 bit ELF executable file.  Be sure to visit the [wiki!](https://github.com/cameronswinoga/yabfc/wiki/Generating-executable-files-from-scratch)
 
 ## Building
 ``` BASH

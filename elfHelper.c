@@ -19,7 +19,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
                     uint16_t    phnum,
                     uint16_t    shentsize,
                     uint16_t    shnum) {
-	ELFHeader->e_ident[EI_MAG0]       = 0x7f;
+	ELFHeader->e_ident[EI_MAG0]       = 0x7f; // Magic numbers
 	ELFHeader->e_ident[EI_MAG1]       = 'E';
 	ELFHeader->e_ident[EI_MAG2]       = 'L';
 	ELFHeader->e_ident[EI_MAG3]       = 'F';
@@ -43,7 +43,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 	ELFHeader->e_phentsize = phentsize; // Size of each program header
 	if (phnum > PN_XNUM) {              // Number of entries in program header table
 		ELFHeader->e_phnum = PN_XNUM;
-		printf("WARNING: Elf64_Ehdr.e_phnum is greater than PN_XNUM, "
+		fprintf(stderr, "WARNING: Elf64_Ehdr.e_phnum is greater than PN_XNUM, "
 		       "sh_info should be set to the number of entries in the program header table\n");
 	} else {
 		ELFHeader->e_phnum = phnum;
@@ -52,7 +52,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 	ELFHeader->e_shentsize = shentsize; // Section header size, in bytes
 	if (shnum > SHN_LORESERVE) {        // Number of entries in section header
 		ELFHeader->e_shnum = 0x0;
-		printf("WARNING: Elf64_Ehdr.e_shnum is greater than SHN_LORESERVE, "
+		fprintf(stderr, "WARNING: Elf64_Ehdr.e_shnum is greater than SHN_LORESERVE, "
 		       "sh_size should be set to the number of entries in the program header table\n");
 	} else {
 		ELFHeader->e_shnum = shnum;
@@ -62,7 +62,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 
 	if (e_shstrndx > SHN_LORESERVE) {
 		ELFHeader->e_shstrndx = SHN_XINDEX;
-		printf("WARNING: Elf64_Ehdr.e_shstrndx is greater than SHN_LORESERVE, "
+		fprintf(stderr, "WARNING: Elf64_Ehdr.e_shstrndx is greater than SHN_LORESERVE, "
 		       "sh_link should be set to the number of entries in the program header table\n");
 	} else {
 		ELFHeader->e_shstrndx = e_shstrndx;
