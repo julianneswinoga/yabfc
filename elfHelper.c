@@ -34,7 +34,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 	ELFHeader->e_type    = ET_EXEC;            // Executable file
 	ELFHeader->e_machine = EM_X86_64;          // AMD x86-64
 	ELFHeader->e_version = EV_CURRENT;         // Current version
-	ELFHeader->e_entry   = entry;              // Entry point of program (>128 MB)
+	ELFHeader->e_entry   = entry;              // Entry point of program
 	ELFHeader->e_phoff   = phoff;              // Program header table offset
 	ELFHeader->e_shoff   = shoff;              // Section header table offset
 	ELFHeader->e_flags   = 0x0;                // Processor specific flags
@@ -58,7 +58,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
 		ELFHeader->e_shnum = shnum;
 	}
 
-	int e_shstrndx = SHN_UNDEF; // Section header table index of the entry associated with thes ection name string table, to be set later
+	int e_shstrndx = SHN_UNDEF; // Section header table index of the entry associated with the section name string table, to be set later
 
 	if (e_shstrndx > SHN_LORESERVE) {
 		ELFHeader->e_shstrndx = SHN_XINDEX;
