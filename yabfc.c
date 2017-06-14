@@ -75,10 +75,12 @@ int main(int argc, char *argv[]) {
 		}
 		if (strcmp(globalOptions.outputFile, "") != 0) {
 			writeFile = fopen(globalOptions.outputFile, "w+");
+			chmod(globalOptions.outputFile, 0755);
 		} else {
 			outputFilename = filenameWithoutExtension(arguments.inputFiles[i]);
 			debugPrintf(1, "Output file: %s\n", outputFilename);
 			writeFile = fopen(outputFilename, "w+");
+			chmod(outputFilename, 0755);
 		}
 
 		SECTION text, data, stringTable; // Set up sections
