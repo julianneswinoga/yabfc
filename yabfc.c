@@ -262,12 +262,13 @@ int main(int argc, char *argv[]) {
 
 		debugPrintf(1, "Done processing file %s\n", arguments.inputFiles[i]);
 
-		free(instructions.instruction);
+		free(instructions.instruction); // Free allocated memory
 		free(code.bytes);
 		free(text.bytes);
 		free(data.bytes);
 		free(stringTable.bytes);
+
+		fclose(readFile);  // Close read file pointer
+		fclose(writeFile); // Close write file pointer
 	}
-	fclose(readFile);  // Close read file pointer
-	fclose(writeFile); // Close write file pointer
 }
