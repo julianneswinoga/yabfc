@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
 			debugPrintf(1, "Output file: %s\n", outputFilename);
 			writeFile = fopen(outputFilename, "w+");
 			chmod(outputFilename, 0755);
+			free(outputFilename);
 		}
 
 		SECTION text, data, stringTable; // Set up sections
