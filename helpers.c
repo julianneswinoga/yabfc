@@ -40,7 +40,7 @@ char *filenameWithoutExtension(char *fileName) {
 	for (i = 0; fileName[i] != '\0' && fileName[i] != '.'; i++)
 		;
 	len = i;
-	ret = malloc(sizeof(char) * len);
+	ret = malloc((sizeof(char) * len) + 1);
 	for (i = 0; i < len; i++) {
 		ret[i] = fileName[i];
 	}
