@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 				    .bracketMatch = -1};
 
 				instructions.instruction                      = (INSTRUCTION *)realloc(instructions.instruction, (instructions.size + 1) * sizeof(INSTRUCTION));
-				instructions.instruction[instructions.size++] = tempInstruction;
+				instructions.instruction[instructions.size]   = tempInstruction;
 			}
 		}
 		debugPrintf(2, "\n");
