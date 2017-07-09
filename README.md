@@ -28,5 +28,8 @@ for any corresponding short options.
 Report bugs to <cameronswinoga@gmail.com>.
 ```
 
+## Testing
+Make sure to have `valgrind` installed, then run `./integration_tests.sh`.  Valgrind is necessary to have a sandbox environment where 64 bit ELF's can run on any host OS.
+
 ## Implementation
 The data pointer in the executable is representated by the assembly stack pointer, as such and new stack allocation is guaranteed to be zeroed initially.  Because of this, as well as the executable being set in 64 bit mode, allows YABFC to have an extremely large value range.  The size for the data pointer is the stack size and the cell size is 2<sup>64</sup>.
