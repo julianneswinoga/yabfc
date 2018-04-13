@@ -1,0 +1,6 @@
+[package]
+name = "yabfc"
+version = "0.1.0"
+authors = ["Cameron Swinoga <cameronswinoga@gmail.com>"]
+
+[dependencies]
