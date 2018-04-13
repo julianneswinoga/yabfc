@@ -70,7 +70,9 @@ bool optimize_compress_PTR(INSTRUCTIONS *instructions, int *position, CODE *code
 bool optimize_clear_loop(INSTRUCTIONS *instructions, int *position, CODE *code) {
 	if (globalOptions.optimize < 2) // Only do on optimization level 2 and higher
 		return false;
-
+	if (instructions->size - (*position) < 3) 
+		return false;
+	
 	char clearLoop[] = "[-]";
 	int  i;
 	for (i = 0; i < sizeof(clearLoop) - 1; i++) {
