@@ -71,6 +71,9 @@ void addSectionData(SECTION *section, uint8_t startByte[], uint32_t size) {
  * @return              The relative position of the bracket, -1 if not found
  */
 int get_matching_bracket(INSTRUCTIONS *instructions, int position, bool throwError) {
+	if (instructions->size <= position) 
+		return -1;
+	
 	if (instructions->instruction[position].type != '[') {
 		if (throwError)
 			fprintf(stderr, "No bracket to match at position %i!\n", position);
