@@ -23,7 +23,7 @@ const char *argp_program_version     = "yabfc 1.0";
 const char *argp_program_bug_address = "<cameronswinoga@gmail.com>";
 
 static char doc[] =
-    "Compiles one or multiple brainfuck files to"
+    "Compiles one or multiple brainfuck files to "
     "the ELF file format, in 64 bit mode";
 
 static char args_doc[] = "Files...";
