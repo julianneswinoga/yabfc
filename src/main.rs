@@ -1,13 +1,29 @@
-#[macro_use] extern crate clap;
+extern crate fern;
+#[macro_use] extern crate log;
+extern crate clap;
+
 use clap::{Arg, App};
 
 #[derive(Debug)]
 struct GLobalOptions {
-    quiet: bool,
+    silent: bool,
     verbose: u8,
     optimize: u8,
     input_files: Vec<String>,
     output_file: String,
+}
+
+fn setup_logger(silent: bool, verbose_level: u8) -> Result<(), fern::InitError> {
+    fern::Dispatch::new()
+        .level(match (silent, verbose_level) {
+            (true, _) => log::LevelFilter::Off,
+            (_, 0) => log::LevelFilter::Warn,
+            (_, 1) => log::LevelFilter::Info,
+            (_, _) => log::LevelFilter::Debug, // Anything >= 2 is debug level
+        })
+        .chain(std::io::stdout())
+        .apply()?;
+    Ok(())
 }
 
 fn parse_cli_opts() -> Result<GLobalOptions, String> {
@@ -15,9 +31,9 @@ fn parse_cli_opts() -> Result<GLobalOptions, String> {
         .version("2.0")
         .author("Cameron Swinoga <cameronswinoga@gmail.com>")
         .about("Compiles one or multiple brainfuck files to the ELF file format, in 64 bit mode")
-        .arg(Arg::with_name("quiet")
-            .short("q")
-            .long("quiet")
+        .arg(Arg::with_name("silent")
+            .short("s")
+            .long("silent")
             .help("Turns off all output"))
         .arg(Arg::with_name("verbose")
             .short("v")
@@ -41,7 +57,7 @@ fn parse_cli_opts() -> Result<GLobalOptions, String> {
             .multiple(true))
         .get_matches();
 
-    let quiet = matches.is_present("quiet");
+    let silent = matches.is_present("silent");
     let verbose = matches.occurrences_of("verbose") as u8;
     let optimize = matches.value_of("optimize")
         .unwrap_or("3").parse::<u8>().unwrap();
@@ -59,7 +75,7 @@ fn parse_cli_opts() -> Result<GLobalOptions, String> {
     };
 
     Ok(GLobalOptions {
-        quiet: quiet,
+        silent: silent,
         verbose: verbose,
         optimize: optimize,
         input_files: input_files,
@@ -68,10 +84,20 @@ fn parse_cli_opts() -> Result<GLobalOptions, String> {
 }
 
 fn main() {
-    let options = match parse_cli_opts() {
+    let config = match parse_cli_opts() {
         Ok(o) => o,
         Err(e) => { println!("{}", e); return; }
     };
 
-    println!("{:?}", options);
+    match setup_logger(config.silent, config.verbose) {
+        Ok(_) => (),
+        Err(_) => { return; }
+    };
+    
+    debug!("{:?}", config);
+    
+    debug!("This is a debug message!");
+    info!("This is an info message!");
+    warn!("This is a warn message!");
+    error!("This is an err message!");
 }

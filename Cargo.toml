@@ -5,3 +5,5 @@ authors = ["Cameron Swinoga <cameronswinoga@gmail.com>"]
 
 [dependencies]
 clap="~2"
+fern="~0.5"
+log="0.4"
