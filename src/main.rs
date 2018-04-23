@@ -6,10 +6,11 @@ struct GLobalOptions {
     quiet: bool,
     verbose: u8,
     optimize: u8,
+    input_files: Vec<String>,
     output_file: String,
 }
 
-fn parse_cli_opts<'a>() -> GLobalOptions {
+fn parse_cli_opts() -> Result<GLobalOptions, String> {
     let matches = App::new("yabfc")
         .version("2.0")
         .author("Cameron Swinoga <cameronswinoga@gmail.com>")
@@ -40,18 +41,37 @@ fn parse_cli_opts<'a>() -> GLobalOptions {
             .multiple(true))
         .get_matches();
 
-    GLobalOptions {
-        quiet: matches.is_present("quiet"),
-        verbose: matches.occurrences_of("verbose") as u8,
-        optimize: matches.value_of("optimize")
-            .unwrap_or("3").parse::<u8>().unwrap(),
-        output_file: matches.value_of("output_file")
-            .unwrap_or("").to_string()
-    }
+    let quiet = matches.is_present("quiet");
+    let verbose = matches.occurrences_of("verbose") as u8;
+    let optimize = matches.value_of("optimize")
+        .unwrap_or("3").parse::<u8>().unwrap();
+    let input_files = matches.values_of("Files")
+        .unwrap().map(|f| f.to_string()).collect::<Vec<String>>();
+    let output_file = matches.value_of("output_file")
+        .unwrap_or("").to_string();
+    
+    let output_file = match (input_files.len(), output_file.is_empty()) {
+        (1, _) => output_file,
+        (_, true) => output_file,
+        (_, false) => {
+            return Err("Cannot have output file with multiple input files present!".to_string())
+        }
+    };
+
+    Ok(GLobalOptions {
+        quiet: quiet,
+        verbose: verbose,
+        optimize: optimize,
+        input_files: input_files,
+        output_file: output_file,
+    })
 }
 
 fn main() {
-    let options = parse_cli_opts();
+    let options = match parse_cli_opts() {
+        Ok(o) => o,
+        Err(e) => { println!("{}", e); return; }
+    };
 
     println!("{:?}", options);
 }
