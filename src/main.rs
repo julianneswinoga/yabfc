@@ -1,8 +1,12 @@
-extern crate fern;
 #[macro_use] extern crate log;
+extern crate fern;
 extern crate clap;
 
 use clap::{Arg, App};
+use std::fs::File;
+use std::io::prelude::*;
+
+static LEGAL_CHARS: &str = "+-><[],.";
 
 #[derive(Debug)]
 struct GLobalOptions {
@@ -83,6 +87,30 @@ fn parse_cli_opts() -> Result<GLobalOptions, String> {
     })
 }
 
+fn parse_files(input_files: Vec<String>) -> Result<(), std::io::Error> {
+    info!("Starting file parse!");
+
+    for filename in input_files {
+        info!("Reading file {}", &filename);
+        let mut file_contents = String::new();
+        let mut f = File::open(filename)?;
+        f.read_to_string(&mut file_contents)?;
+
+        let legal_contents = file_contents.chars()
+            .filter(|c: &char|
+                LEGAL_CHARS.chars()
+                    .any(|b: char| b == *c)
+            ).collect::<String>();
+
+        debug!("Read in file contents {}", &legal_contents);
+
+        for c in legal_contents.chars() {
+            // println!("{}", c);
+        }
+    }
+    Ok(())
+}
+
 fn main() {
     let config = match parse_cli_opts() {
         Ok(o) => o,
@@ -93,11 +121,12 @@ fn main() {
         Ok(_) => (),
         Err(_) => { return; }
     };
-    
-    debug!("{:?}", config);
-    
-    debug!("This is a debug message!");
-    info!("This is an info message!");
-    warn!("This is a warn message!");
-    error!("This is an err message!");
+
+    debug!("Silent: {}", config.silent);
+    debug!("Verbose: {}", config.verbose);
+    debug!("Optimize: {}", config.optimize);
+    debug!("Input files: {:?}", config.input_files);
+    debug!("Output file: {}", config.output_file);
+
+    parse_files(config.input_files).expect("File parse error!");
 }
