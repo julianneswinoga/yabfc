@@ -4,18 +4,18 @@
 #include <stdint.h>
 
 typedef struct {
-	int      size;
-	uint8_t *bytes;
+    int size;
+    uint8_t *bytes;
 } CODE;
 
 typedef struct {
-	char type;
-	int  bracketMatch;
+    char type;
+    int bracketMatch;
 } INSTRUCTION;
 
 typedef struct {
-	uint32_t     size;
-	INSTRUCTION *instruction;
+    uint32_t size;
+    INSTRUCTION *instruction;
 } INSTRUCTIONS;
 
-#endif // STRUCTURES_H_
+#endif  // STRUCTURES_H_

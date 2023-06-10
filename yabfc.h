@@ -1,10 +1,6 @@
 #ifndef YABFC_H_
 #define YABFC_H_
 
-#include "arguments.h"
-#include "assembly.h"
-#include "helpers.h"
-#include "optimize.h"
 #include <argp.h>
 #include <elf.h>
 #include <stdbool.h>
@@ -12,6 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include "arguments.h"
+#include "assembly.h"
+#include "helpers.h"
+#include "optimize.h"
 
 #define VALID_COMMANDS ("+-<>[],.")
 
@@ -19,8 +19,8 @@
 static error_t parse_opt(int, char *, struct argp_state *);
 
 // Author information
-const char *argp_program_version     = "yabfc 1.0";
-const char *argp_program_bug_address = "<cameronswinoga@gmail.com>";
+const char *argp_program_version = "yabfc 1.0";
+const char *argp_program_bug_address = "<julianneswinoga@gmail.com>";
 
 static char doc[] =
     "Compiles one or multiple brainfuck files to "
@@ -28,7 +28,7 @@ static char doc[] =
 
 static char args_doc[] = "Files...";
 
-//The options that can be applied to the program
+// The options that can be applied to the program
 static struct argp_option options[] = {
     {"quiet", 'q', 0, 0, "Do not produce any output"},
     {"silent", 's', 0, OPTION_ALIAS},
@@ -40,25 +40,23 @@ static struct argp_option options[] = {
 
 // Structure to hold the arguments
 struct argumentStruct {
-	char **inputFiles;
-	int    silent;
-	int    verbose;
-	int    optimize;
-	char * output_file;
+    char **inputFiles;
+    int silent;
+    int verbose;
+    int optimize;
+    char *output_file;
 };
 
-struct argumentStruct arguments = {
-    .silent      = 0,
-    .verbose     = 1,
-    .optimize    = 3,
-    .output_file = ""}; // Initialize an argument struct
+struct argumentStruct arguments = {.silent = 0,
+                                   .verbose = 1,
+                                   .optimize = 3,
+                                   .output_file = ""};  // Initialize an argument struct
 
-globalOptionsStruct globalOptions = {
-    .verbose    = 0,
-    .optimize   = 0,
-    .silent     = false,
-    .outputFile = ""}; // Program arguments that should be globally shared
+globalOptionsStruct globalOptions = {.verbose = 0,
+                                     .optimize = 0,
+                                     .silent = false,
+                                     .outputFile = ""};  // Program arguments that should be globally shared
 
 static struct argp argp = {options, parse_opt, args_doc, doc};
 
-#endif // YABFC_H_
+#endif  // YABFC_H_

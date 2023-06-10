@@ -1,13 +1,13 @@
 #ifndef ASSEMBLY_H_
 #define ASSEMBLY_H_
 
-#include "arguments.h"
-#include "helpers.h"
-#include "structures.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "arguments.h"
+#include "helpers.h"
+#include "structures.h"
 
 #define SIZEOFSTACKADDRESS (8)
 
@@ -26,4 +26,4 @@ void construct_END(CODE *);
 void construct_CLEAR(CODE *);
 void construct_MULTIPLY(CODE *, int, int);
 
-#endif // ASSEMBLY_H_
+#endif  // ASSEMBLY_H_

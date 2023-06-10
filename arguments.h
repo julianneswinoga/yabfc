@@ -4,12 +4,12 @@
 #include <stdbool.h>
 
 typedef struct globalOptionsStruct {
-	int   verbose;
-	int   optimize;
-	bool  silent;
-	char *outputFile;
+    int verbose;
+    int optimize;
+    bool silent;
+    char *outputFile;
 } globalOptionsStruct;
 
 extern globalOptionsStruct globalOptions;
 
-#endif // ARGUMENTS_H_
+#endif  // ARGUMENTS_H_

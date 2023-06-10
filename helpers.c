@@ -7,12 +7,12 @@
  * @param VARARGS printf arguments
  */
 void debugPrintf(int level, const char *fmt, ...) {
-	if (!globalOptions.silent && globalOptions.verbose >= level) {
-		va_list args;
-		va_start(args, fmt);
-		vprintf(fmt, args);
-		va_end(args);
-	}
+    if (!globalOptions.silent && globalOptions.verbose >= level) {
+        va_list args;
+        va_start(args, fmt);
+        vprintf(fmt, args);
+        va_end(args);
+    }
 }
 
 /**
@@ -22,11 +22,14 @@ void debugPrintf(int level, const char *fmt, ...) {
  * @return            Starting index of the requested string
  */
 uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
-	uint32_t stringIndex = 0, i = 0; // Initialize variables
-	for (; stringIndex != index; i++)
-		if (*(stringData + i) == '\0') stringIndex++; // Increment the string index if we are on a null character
+    uint32_t stringIndex = 0, i = 0;  // Initialize variables
+    for (; stringIndex != index; i++) {
+        if (*(stringData + i) == '\0') {
+            stringIndex++;  // Increment the string index if we are on a null character
+        }
+    }
 
-	return i; // Return the index
+    return i;  // Return the index
 }
 
 /**
@@ -35,17 +38,18 @@ uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
  * @return 			The filename stripped of the extension
  */
 char *filenameWithoutExtension(char *fileName) {
-	char *ret;
-	int   i, len;
-	for (i = 0; fileName[i] != '\0' && fileName[i] != '.'; i++)
-		;
-	len = i;
-	ret = malloc((sizeof(char) * len) + 1);
-	for (i = 0; i < len; i++) {
-		ret[i] = fileName[i];
-	}
-	ret[i] = '\0';
-	return ret;
+    char *ret;
+    int i, len;
+    for (i = 0; fileName[i] != '\0' && fileName[i] != '.'; i++) {
+        ;
+    }
+    len = i;
+    ret = malloc((sizeof(char) * len) + 1);
+    for (i = 0; i < len; i++) {
+        ret[i] = fileName[i];
+    }
+    ret[i] = '\0';
+    return ret;
 }
 
 /**
@@ -55,13 +59,14 @@ char *filenameWithoutExtension(char *fileName) {
  * @param size      How much data is being added
  */
 void addSectionData(SECTION *section, uint8_t startByte[], uint32_t size) {
-	(*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t)); // Reallocate memory
+    (*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t));  // Reallocate memory
 
-	uint32_t byteIndex = 0;
-	for (uint32_t i         = (*section).size; i < (*section).size + size; i++)
-		(*section).bytes[i] = *(startByte + byteIndex++); // Add the data to the section
+    uint32_t byteIndex = 0;
+    for (uint32_t i = (*section).size; i < (*section).size + size; i++) {
+        (*section).bytes[i] = *(startByte + byteIndex++);  // Add the data to the section
+    }
 
-	(*section).size += size; // Increment the sections size by how much data was added
+    (*section).size += size;  // Increment the sections size by how much data was added
 }
 
 /**
@@ -71,22 +76,23 @@ void addSectionData(SECTION *section, uint8_t startByte[], uint32_t size) {
  * @return              The relative position of the bracket, -1 if not found
  */
 int get_matching_bracket(INSTRUCTIONS *instructions, int position, bool throwError) {
-	if (instructions->instruction[position].type != '[') {
-		if (throwError)
-			fprintf(stderr, "No bracket to match at position %i!\n", position);
-		return -1;
-	}
+    if (instructions->instruction[position].type != '[') {
+        if (throwError) {
+            fprintf(stderr, "No bracket to match at position %i!\n", position);
+        }
+        return -1;
+    }
 
-	int bracket_depth = 0;
-	for (int i = position; i < instructions->size; i++) {
-		if (instructions->instruction[i].type == '[') {
-			bracket_depth++;
-		} else if (instructions->instruction[i].type == ']') {
-			bracket_depth--;
-		}
-		if (bracket_depth == 0 && instructions->instruction[i].type == ']') {
-			return i - position;
-		}
-	}
-	return -1; // Bracket not found
+    int bracket_depth = 0;
+    for (int i = position; i < instructions->size; i++) {
+        if (instructions->instruction[i].type == '[') {
+            bracket_depth++;
+        } else if (instructions->instruction[i].type == ']') {
+            bracket_depth--;
+        }
+        if (bracket_depth == 0 && instructions->instruction[i].type == ']') {
+            return i - position;
+        }
+    }
+    return -1;  // Bracket not found
 }
