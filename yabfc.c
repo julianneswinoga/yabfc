@@ -174,10 +174,10 @@ int main(int argc, char *argv[]) {
         construct_END(&code);
 
         elfSection_t text = {
-            .size = 0,
-            .bytes = malloc(text.size * sizeof(uint8_t)),
+            .size = code.size,
+            .bytes = malloc(code.size),
         };
-        addSectionData(&text, code.bytes, code.size);  // Add the .text
+        memcpy(text.bytes, code.bytes, code.size);
 
         debugPrintf(2,
                     "Optimization results:\n"
@@ -191,23 +191,22 @@ int main(int argc, char *argv[]) {
 
         debugPrintf(2, "Constructing .data section\n");
 
+        // Add some example data
+        const uint8_t tempData[] = "example .data data";
         elfSection_t data = {
-            .size = 0,
-            .bytes = malloc(data.size * sizeof(uint8_t)),
+            .size = sizeof(tempData),
+            .bytes = malloc(sizeof(tempData)),
         };
-        uint8_t tempData = '0';
-        for (int i = 0; i < 0; i++) {
-            addSectionData(&data, (uint8_t *)&tempData, sizeof(tempData));  // Add some example data
-        }
+        memcpy(data.bytes, tempData, sizeof(tempData));
 
         debugPrintf(2, "Constructing .shrtrab section\n");
+        // Set up the string table section with the appropriate names
+        const uint8_t stringData[] = "\0.text\0.data\0.shrtrab\0";
         elfSection_t stringTable = {
-            .size = 0,
-            .bytes = malloc(stringTable.size * sizeof(uint8_t)),
+            .size = sizeof(stringData),
+            .bytes = malloc(sizeof(stringData)),
         };
-        uint8_t stringData[] =
-            "\0.text\0.data\0.shrtrab\0";  // Set up the string table section with the appropriate names
-        addSectionData(&stringTable, (uint8_t *)&stringData, sizeof(stringData));
+        memcpy(stringTable.bytes, stringData, sizeof(stringData));
 
         Elf64_Phdr programHeaderTable[PGM_HEADER_NUM];
         setupProgramHeader(&programHeaderTable[0], /* .text segment */

@@ -53,23 +53,6 @@ char *filenameWithoutExtension(const char *const fileName) {
 }
 
 /**
- * Function to add data to a section struct
- * @param section   The section to modify
- * @param startByte Byte array of data to add
- * @param size      How much data is being added
- */
-void addSectionData(elfSection_t *section, const uint8_t startByte[], uint32_t size) {
-    section->bytes = realloc(section->bytes, (section->size + size) * sizeof(uint8_t));  // Reallocate memory
-
-    unsigned byteIndex = 0;
-    for (unsigned i = section->size; i < (section->size + size); i++) {
-        section->bytes[i] = *(startByte + byteIndex++);  // Add the data to the section
-    }
-
-    section->bytes += size;  // Increment the sections size by how much data was added
-}
-
-/**
  * Gets the relative position of a bracket
  * @param  instructions A pointer to an INSTRUCTIONS type to read characters from
  * @param  position     The position of the bracket we want to match
