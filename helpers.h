@@ -12,10 +12,10 @@
 #include "structures.h"
 
 // Function declarations
-void debugPrintf(int, const char *, ...);
-char *filenameWithoutExtension(char *);
-uint32_t stringIndexFromSectionIndex(uint8_t *, uint8_t);
-void addSectionData(SECTION *, uint8_t *, uint32_t);
-int get_matching_bracket(INSTRUCTIONS *, int, bool);
+void debugPrintf(int level, const char *fmt, ...);
+uint32_t stringIndexFromSectionIndex(const uint8_t *const stringData, uint8_t index);
+char *filenameWithoutExtension(const char *const fileName);
+void addSectionData(SECTION *section, const uint8_t startByte[], uint32_t size);
+int getMatchingBracket(INSTRUCTIONS *instructions, int position, bool throwError);
 
 #endif  // HELPERS_H_

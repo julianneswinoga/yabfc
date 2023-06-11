@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
                     construct_SUBESP(&code, SIZEOFSTACKADDRESS);
                     break;
                 case '[':
-                    if ((relativeBracket = get_matching_bracket(&instructions, i, true)) == -1) {
+                    if ((relativeBracket = getMatchingBracket(&instructions, i, true)) == -1) {
                         fprintf(stderr, "Opening bracket does not have a matching closing bracket at position %i!\n",
                                 i);
                         exit(1);
@@ -205,13 +205,13 @@ int main(int argc, char *argv[]) {
         addSectionData(&stringTable, (uint8_t *)&stringData, sizeof(stringData));
 
         Elf64_Phdr programHeaderTable[PGM_HEADER_NUM];
-        setupprogramHeader(&programHeaderTable[0], /* .text segment */
+        setupProgramHeader(&programHeaderTable[0], /* .text segment */
                            PF_R + PF_X,            /* Segment permissions */
                            TEXT_FILE_LOC,          /* File offset for the contents of the segment */
                            TEXT_MEM_LOC,           /* Virtual address where the segment will be loaded */
                            text.size               /* Segment size */
         );
-        setupprogramHeader(&programHeaderTable[1], /* .data segment */
+        setupProgramHeader(&programHeaderTable[1], /* .data segment */
                            PF_R + PF_W + PF_X, TEXT_FILE_LOC + text.size, TEXT_MEM_LOC + text.size, data.size);
 
         Elf64_Shdr sectionHeaderTable[SEC_HEADER_NUM];

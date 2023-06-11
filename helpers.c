@@ -21,7 +21,7 @@ void debugPrintf(int level, const char *fmt, ...) {
  * @param  index      Index of string to get
  * @return            Starting index of the requested string
  */
-uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
+uint32_t stringIndexFromSectionIndex(const uint8_t *const stringData, uint8_t index) {
     uint32_t stringIndex = 0, i = 0;  // Initialize variables
     for (; stringIndex != index; i++) {
         if (*(stringData + i) == '\0') {
@@ -34,17 +34,17 @@ uint32_t stringIndexFromSectionIndex(uint8_t stringData[], uint8_t index) {
 
 /**
  * Function that returns a filename without an extension on it
- * @param  fileName The full filename
+ * @param[in] fileName The full filename
  * @return 			The filename stripped of the extension
  */
-char *filenameWithoutExtension(char *fileName) {
-    char *ret;
-    int i, len;
+char *filenameWithoutExtension(const char *const fileName) {
+    int i;
+    // TODO: assumes that there is only one . in the fileName
     for (i = 0; fileName[i] != '\0' && fileName[i] != '.'; i++) {
         ;
     }
-    len = i;
-    ret = malloc((sizeof(char) * len) + 1);
+    const int len = i;
+    char *ret = malloc((sizeof(char) * len) + 1);
     for (i = 0; i < len; i++) {
         ret[i] = fileName[i];
     }
@@ -58,7 +58,7 @@ char *filenameWithoutExtension(char *fileName) {
  * @param startByte Byte array of data to add
  * @param size      How much data is being added
  */
-void addSectionData(SECTION *section, uint8_t startByte[], uint32_t size) {
+void addSectionData(SECTION *section, const uint8_t startByte[], uint32_t size) {
     (*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t));  // Reallocate memory
 
     uint32_t byteIndex = 0;
@@ -75,7 +75,7 @@ void addSectionData(SECTION *section, uint8_t startByte[], uint32_t size) {
  * @param  position     The position of the bracket we want to match
  * @return              The relative position of the bracket, -1 if not found
  */
-int get_matching_bracket(INSTRUCTIONS *instructions, int position, bool throwError) {
+int getMatchingBracket(INSTRUCTIONS *instructions, int position, bool throwError) {
     if (instructions->instruction[position].type != '[') {
         if (throwError) {
             fprintf(stderr, "No bracket to match at position %i!\n", position);

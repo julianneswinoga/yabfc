@@ -42,8 +42,8 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
     ELFHeader->e_flags = 0x0;                  // Processor specific flags
     ELFHeader->e_ehsize = sizeof(Elf64_Ehdr);  // ELF Header size
 
-    ELFHeader->e_phentsize = phentsize;  // Size of each program header
-    if (phnum > PN_XNUM) {               // Number of entries in program header table
+    ELFHeader->e_phentsize = phentsize;        // Size of each program header
+    if (phnum > PN_XNUM) {                     // Number of entries in program header table
         ELFHeader->e_phnum = PN_XNUM;
         fprintf(stderr,
                 "WARNING: Elf64_Ehdr.e_phnum is greater than PN_XNUM, "
@@ -83,7 +83,7 @@ void setupELFHeader(Elf64_Ehdr *ELFHeader,
  * @param moffset            Program section memory offset
  * @param size               Program section
  */
-void setupprogramHeader(Elf64_Phdr *programHeader, uint64_t flags, uint64_t poffset, uint64_t moffset, uint64_t size) {
+void setupProgramHeader(Elf64_Phdr *programHeader, uint64_t flags, uint64_t poffset, uint64_t moffset, uint64_t size) {
     programHeader->p_type = PT_LOAD;
     programHeader->p_flags = flags;
     programHeader->p_offset = poffset;

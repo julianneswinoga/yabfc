@@ -13,7 +13,7 @@ int total_MULTIPLY = 0;
  * @param  dec          What character specifies a `-1`
  * @return              A number that represents the compressed instruction string
  */
-int lookahead_compress(INSTRUCTIONS *instructions, int *position, char inc, char dec) {
+static int lookahead_compress(INSTRUCTIONS *instructions, int *position, char inc, char dec) {
     int count = 0;
     while ((*position) < instructions->size &&
            (instructions->instruction[(*position)].type == inc ||
@@ -97,7 +97,7 @@ bool optimize_multiplication(INSTRUCTIONS *instructions, int *position, CODE *co
 
     int startbracket = (*position), endbracket;
 
-    if ((endbracket = get_matching_bracket(instructions, startbracket, false)) ==
+    if ((endbracket = getMatchingBracket(instructions, startbracket, false)) ==
         -1) {  // Check we are in a 'leaf' loop
         return false;
     }

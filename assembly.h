@@ -12,18 +12,17 @@
 #define SIZEOFSTACKADDRESS (8)
 
 // Function declarations
-void construct_arbitrary(CODE *, uint8_t *, uint16_t);
-void construct_ADD(CODE *, uint32_t);
-void construct_SUB(CODE *, uint32_t);
-void construct_ADDESP(CODE *, uint32_t);
-void construct_SUBESP(CODE *, uint32_t);
-void construct_LPSTART(CODE *);
-void construct_LPEND(CODE *);
-void construct_INPUT(CODE *);
-void construct_PRINT(CODE *);
-void construct_START(CODE *);
-void construct_END(CODE *);
-void construct_CLEAR(CODE *);
-void construct_MULTIPLY(CODE *, int, int);
+void construct_ADD(CODE *code, uint32_t add);
+void construct_SUB(CODE *code, uint32_t sub);
+void construct_ADDESP(CODE *code, uint32_t num);
+void construct_SUBESP(CODE *code, uint32_t num);
+void construct_LPSTART(CODE *code);
+void construct_LPEND(CODE *code);
+void construct_INPUT(CODE *code);
+void construct_PRINT(CODE *code);
+void construct_START(CODE *code);
+void construct_END(CODE *code);
+void construct_CLEAR(CODE *code);
+void construct_MULTIPLY(CODE *code, int a, int offset);
 
 #endif  // ASSEMBLY_H_
