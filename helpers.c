@@ -58,15 +58,15 @@ char *filenameWithoutExtension(const char *const fileName) {
  * @param startByte Byte array of data to add
  * @param size      How much data is being added
  */
-void addSectionData(SECTION *section, const uint8_t startByte[], uint32_t size) {
-    (*section).bytes = realloc((*section).bytes, ((*section).size + size) * sizeof(uint8_t));  // Reallocate memory
+void addSectionData(elfSection_t *section, const uint8_t startByte[], uint32_t size) {
+    section->bytes = realloc(section->bytes, (section->size + size) * sizeof(uint8_t));  // Reallocate memory
 
-    uint32_t byteIndex = 0;
-    for (uint32_t i = (*section).size; i < (*section).size + size; i++) {
-        (*section).bytes[i] = *(startByte + byteIndex++);  // Add the data to the section
+    unsigned byteIndex = 0;
+    for (unsigned i = section->size; i < (section->size + size); i++) {
+        section->bytes[i] = *(startByte + byteIndex++);  // Add the data to the section
     }
 
-    (*section).size += size;  // Increment the sections size by how much data was added
+    section->bytes += size;  // Increment the sections size by how much data was added
 }
 
 /**

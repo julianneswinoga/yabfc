@@ -15,7 +15,7 @@
 void debugPrintf(int level, const char *fmt, ...);
 uint32_t stringIndexFromSectionIndex(const uint8_t *const stringData, uint8_t index);
 char *filenameWithoutExtension(const char *const fileName);
-void addSectionData(SECTION *section, const uint8_t startByte[], uint32_t size);
+void addSectionData(elfSection_t *section, const uint8_t startByte[], uint32_t size);
 int getMatchingBracket(INSTRUCTIONS *instructions, int position, bool throwError);
 
 #endif  // HELPERS_H_

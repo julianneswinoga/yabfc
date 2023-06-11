@@ -41,6 +41,6 @@ void setupSectionHeader(Elf64_Shdr *sectionHeader,
 typedef struct {
     uint32_t size;
     uint8_t *bytes;
-} SECTION;
+} elfSection_t;
 
 #endif  // ELFHELPER_H_

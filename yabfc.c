@@ -42,7 +42,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
         default:
             return ARGP_ERR_UNKNOWN;  // Error
     }
-    return 0;  // No error
+    return 0;                         // No error
 }
 
 /**
@@ -54,9 +54,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 int main(int argc, char *argv[]) {
     int numFiles;
     char *outputFilename;
-    FILE *readFile, *writeFile;  // Read and write file pointers
+    FILE *readFile, *writeFile;                                       // Read and write file pointers
 
-    argp_parse(&argp, argc, argv, 0, 0, &arguments);  // Parse the command line arguments
+    argp_parse(&argp, argc, argv, 0, 0, &arguments);                  // Parse the command line arguments
 
     for (numFiles = 0; arguments.inputFiles[numFiles]; numFiles++) {  // Count the number of input files
         ;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
         globalOptions.outputFile = "";
     }
 
-    for (int i = 0; arguments.inputFiles[i]; i++) {  // Loop through the input files
+    for (int i = 0; arguments.inputFiles[i]; i++) {      // Loop through the input files
         debugPrintf(1, "Opening file %s\n", arguments.inputFiles[i]);
         readFile = fopen(arguments.inputFiles[i], "r");  // Open file for reading
         if (readFile == NULL) {
@@ -93,18 +93,10 @@ int main(int argc, char *argv[]) {
             free(outputFilename);
         }
 
-        SECTION text, data, stringTable;  // Set up sections
-        text.size = 0;
-        text.bytes = malloc(text.size * sizeof(uint8_t));
-        data.size = 0;
-        data.bytes = malloc(data.size * sizeof(uint8_t));
-        stringTable.size = 0;
-        stringTable.bytes = malloc(stringTable.size * sizeof(uint8_t));
-
         Elf64_Ehdr ELFHeader;                                            // Initialize the ELF header
         setupELFHeader(&ELFHeader, ENTRY_POINT, PGM_HEADER_TBL_LOC, 0x0, /*Section header location*/
                        PGM_HEADER_SIZE, PGM_HEADER_NUM, SEC_HEADER_SIZE,
-                       SEC_HEADER_NUM);  // Mostly set up the ELF header
+                       SEC_HEADER_NUM);                                  // Mostly set up the ELF header
 
         debugPrintf(2, "Constructing .text section\n");
 
@@ -181,6 +173,10 @@ int main(int argc, char *argv[]) {
         }
         construct_END(&code);
 
+        elfSection_t text = {
+            .size = 0,
+            .bytes = malloc(text.size * sizeof(uint8_t)),
+        };
         addSectionData(&text, code.bytes, code.size);  // Add the .text
 
         debugPrintf(2,
@@ -194,12 +190,21 @@ int main(int argc, char *argv[]) {
         debugPrintf(2, "Code bytesize: %i\nSection bytesize: %i\n", code.size, text.size);
 
         debugPrintf(2, "Constructing .data section\n");
+
+        elfSection_t data = {
+            .size = 0,
+            .bytes = malloc(data.size * sizeof(uint8_t)),
+        };
         uint8_t tempData = '0';
         for (int i = 0; i < 0; i++) {
             addSectionData(&data, (uint8_t *)&tempData, sizeof(tempData));  // Add some example data
         }
 
         debugPrintf(2, "Constructing .shrtrab section\n");
+        elfSection_t stringTable = {
+            .size = 0,
+            .bytes = malloc(stringTable.size * sizeof(uint8_t)),
+        };
         uint8_t stringData[] =
             "\0.text\0.data\0.shrtrab\0";  // Set up the string table section with the appropriate names
         addSectionData(&stringTable, (uint8_t *)&stringData, sizeof(stringData));
@@ -225,7 +230,7 @@ int main(int argc, char *argv[]) {
                            TEXT_FILE_LOC,                                     /* Section file location */
                            text.size                                          /* Segment size */
         );
-        setupSectionHeader(&sectionHeaderTable[2], /* .data header */
+        setupSectionHeader(&sectionHeaderTable[2],                            /* .data header */
                            stringIndexFromSectionIndex(stringTable.bytes, 2), SHT_PROGBITS, SHF_ALLOC + SHF_WRITE,
                            TEXT_MEM_LOC + text.size, TEXT_FILE_LOC + text.size, data.size);
         setupSectionHeader(&sectionHeaderTable[3], /* .shrtrab header */
@@ -245,9 +250,9 @@ int main(int argc, char *argv[]) {
         fwrite(&programHeaderTable, 1, sizeof(programHeaderTable), writeFile);  // Write program header table
 
         debugPrintf(2, "Writing .text section of size %i bytes\n", text.size);
-        fwrite(text.bytes, 1, text.size, writeFile);  // Write .text
+        fwrite(text.bytes, 1, text.size, writeFile);                // Write .text
         debugPrintf(2, "Writing .data section of size %i bytes\n", data.size);
-        fwrite(data.bytes, 1, data.size, writeFile);  // Write .data
+        fwrite(data.bytes, 1, data.size, writeFile);                // Write .data
         debugPrintf(2, "Writing .shrtrab section of size %i bytes\n", stringTable.size);
         fwrite(stringTable.bytes, 1, stringTable.size, writeFile);  // Write .shrtrab
 
